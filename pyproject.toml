@@ -1,0 +1,35 @@
+[project]
+name = "osu"
+version = "0.0.1"
+authors = [
+  { name="Filip Machacek", email="machafi24@sps-prosek.cz" },
+]
+
+description = "A game inspired by osu!"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+
+[project.scripts]
+cgui-example = "src.main:main"
+
+
+[project.urls]
+Homepage = "https://github.com/diamondblock935/osu"
+Issues = "https://github.com/diamondblock935/osu/issues"
+
+
+[build-system]
+# Minimum requirements for the build system to execute.
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
