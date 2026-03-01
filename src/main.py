@@ -23,7 +23,7 @@ def position(radius):
         return pos
 
 
-def Main():
+def main():
     screen.fill((0,0,0))
     
     Osu = Chonky_font.render("Osu", True, (0,106,255))
@@ -128,7 +128,7 @@ for i in circles:
 
 while running:
     if status == "menu":
-        Main()
+        main()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
