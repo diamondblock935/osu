@@ -1,0 +1,55 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env/
+.venv/
+env/
+ENV/
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Logs
+*.log
+
+# Unit test / coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+pytest_cache/
+
+# Jupyter (if you prototype in notebooks)
+.ipynb_checkpoints/
+
+# Type checker caches
+.mypy_cache/
+.pyre/
+.pyright/
+
+# --- Pygame / Game Dev ---
+# Generated assets or temporary files
+*.tmp
+*.bak
+
+# If you export builds with tools like pyinstaller
+*.spec
+
+# If you store large assets you don't want in git (optional)
+# assets/raw/
+# assets/temp/
+
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
