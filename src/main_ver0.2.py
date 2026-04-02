@@ -1,3 +1,5 @@
+import math
+
 import pygame
 import random
 
@@ -12,7 +14,8 @@ Chonky_font = pygame.font.SysFont('Arial', 32)
 running = True
 score = 0
 combo = 0
-fps = 120
+fps = 30
+mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
 score_popup_timer = 0
 score_popup_pos = (0, 0)
 score_add_text = None
@@ -59,9 +62,11 @@ class Circle():
         
 
     def handle_event(self, event):
+        global mouse_pos
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_x or event.key == pygame.K_z:
-                if pygame.mouse.get_pos()[0] in range(self.circle_pos[0] - self.radius, self.circle_pos[0] + self.radius) and pygame.mouse.get_pos()[1] in range(self.circle_pos[1] - self.radius, self.circle_pos[1] + self.radius):
+                if mouse_pos.distance_to(self.circle_pos) <= self.radius:
                     self.command(self, event)
                     self.color = "green"
                     
@@ -77,6 +82,7 @@ class Circle():
             self.score_add = 'x'
             score_add_text = smol_font.render(self.score_add, True, "red")
             combo = 0
+
         elif approach_circles[circles.index(self)].radius - self.radius <= 7:
             self.score_add = 300
             score_add_text = smol_font.render(str(self.score_add), True, "cyan")
@@ -101,13 +107,12 @@ class Circle():
         approach_circles[circles.index(self)].pos = self.circle_pos
         approach_circles[circles.index(self)].radius = 100
 
-    def slide(self, event):
-        ...
         
 
 class Approach_Circle():
-    def __init__(self, color, pos):
-        self.radius = 100
+    def __init__(self, color, pos, radius = 100):
+        self.finished = False
+        self.radius = radius
         self.pos = pos
         self.color = color
 
@@ -115,31 +120,84 @@ class Approach_Circle():
     def draw(self):
         pygame.draw.circle(screen,self.color , self.pos, self.radius, 3)
         self.radius -= 80 / fps
-        if self.radius <= 40:
-            Circle.click(circles[approach_circles.index(self)], None)
-            self.radius = 100
+        # if self.radius <= 40:
+        #     Circle.click(circles[approach_circles.index(self)], None)
+        #     self.radius = 100
 
 
 class slider():
-    def __init__(self, color, start_pos, end_pos):
+    def __init__(self, color, start_pos, end_pos, duration):
+        self.finished = False
         self.color = color
         self.start_pos = start_pos
         self.end_pos = end_pos
+        self.duration = duration
+        self.start_time = pygame.time.get_ticks() + 1000 * 50 / 60
+        self.progress = 0
+        self.slider_ball_pos = self.start_pos
+
+    def slide(self, event):
+        self.progress = (pygame.time.get_ticks() - self.start_time) / self.duration
+        self.progress = max(0, min(1, self.progress)) 
+        self.slider_ball_pos = pygame.Vector2(self.start_pos).lerp(self.end_pos, self.progress)
+        if self.progress >= 1:
+            self.click(event)
+            self.finished = True
+            approach_circles[sliders.index(self)].finished = True
+            
+    
+    def click(self, event):
+        global score, combo, score_popup_timer, score_popup_pos, score_add_text
+        
+        if self.progress >= 0.95:
+            self.score_add = 300
+            score_add_text = smol_font.render(str(self.score_add), True, "cyan")
+        elif self. progress >= 0.85:
+            self.score_add = 100
+            score_add_text = smol_font.render(str(self.score_add), True, "green")
+        elif self.progress >= 0.7:
+            self.score_add = 50
+            score_add_text = smol_font.render(str(self.score_add), True, "yellow")
+        else:
+            self.score_add = 'x'
+            score_add_text = smol_font.render(self.score_add, True, "red")
+            combo = 0
+
+        if type(self.score_add) == int:
+            score += self.score_add + self.score_add * combo / 5
+            combo += 1
+            
+        score_popup_timer = 20
+        score_popup_pos = (self.end_pos[0] -score_add_text.get_width() // 2, self.end_pos[1] - score_add_text.get_height() // 2)
+
+    def handle_event(self, event):
+        global mouse_pos
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_x] or keys[pygame.K_z]:
+            if mouse_pos.distance_to(self.slider_ball_pos) <= 50 and self.progress != 1:
+                approach_circles[sliders.index(self)].radius = 50
+                approach_circles[sliders.index(self)].pos = self.slider_ball_pos
+                print('sliding')
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_x or event.key == pygame.K_z:
+                self.click(event)
 
     def draw(self):
         pygame.draw.line(screen, self.color, self.start_pos, self.end_pos, 100)
-        # pygame.draw.circle(screen, "cyan", self.start_pos, 50)
-        # pygame.draw.circle(screen, "cyan", self.end_pos, 50)
+        pygame.draw.circle(screen, "white", self.start_pos, 50)
+        pygame.draw.circle(screen, "white", self.end_pos, 50)
+        pygame.draw.circle(screen, "green", self.slider_ball_pos, 50)
+        # print(pygame.time.get_ticks(), self.start_time, self.progress)
 
 
 
 
-sliders = [slider("white", (200,200), (500, 350))]
+sliders = [slider("white", (200,200), (500, 350), 5000)]
 circles = [Circle("cyan", "black", "1", Circle.click, (700, 600), 50)]
 approach_circles = []
 
 for i in sliders:
-    circles.append(Circle("cyan", "black", "1", Circle.slide, i.start_pos, 50))
+    approach_circles.append(Approach_Circle("white", i.start_pos))
 
 for i in circles:
     approach_circles.append(Approach_Circle("white", i.circle_pos))
@@ -147,6 +205,7 @@ for i in circles:
 
 
 while running:
+    mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
     if status == "menu":
         Main()
         for event in pygame.event.get():
@@ -171,13 +230,17 @@ while running:
 
             for i in circles:
                 i.handle_event(event)
+            for i in sliders:
+                i.handle_event(event)
 
         
         
         pygame.display.flip()
         screen.fill("black")
         for i in sliders:
-            i.draw()
+            if not i.finished:
+                i.draw()
+                i.slide(event)
         for i in approach_circles:
             i.draw()
         for i in circles:
@@ -196,4 +259,4 @@ while running:
         combo_text = Chonky_font.render(f"Combo: {combo}", True, "white")
         screen.blit(combo_text, (10, height - 10 - combo_text.get_height()))
             
-    clock.tick(fps) 
+        clock.tick(fps) 
