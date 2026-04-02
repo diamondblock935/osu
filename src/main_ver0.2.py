@@ -14,7 +14,7 @@ Chonky_font = pygame.font.SysFont('Arial', 32)
 running = True
 score = 0
 combo = 0
-fps = 30
+fps = 60
 mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
 score_popup_timer = 0
 score_popup_pos = (0, 0)
@@ -99,18 +99,18 @@ class Circle():
             score += self.score_add + self.score_add * combo / 10
             combo += 1
             
-        self.text = str(int(self.text) + 1)
+        # self.text = str(int(self.text) + 1)
         score_popup_timer = 20
         score_popup_pos = (self.circle_pos[0] -score_add_text.get_width() // 2, self.circle_pos[1] - score_add_text.get_height() // 2)
 
         # self.circle_pos = position(self.radius)
-        approach_circles[circles.index(self)].pos = self.circle_pos
-        approach_circles[circles.index(self)].radius = 100
+        # approach_circles[circles.index(self)].pos = self.circle_pos
+        approach_circles[circles.index(self)].radius = 0
 
         
 
 class Approach_Circle():
-    def __init__(self, color, pos, radius = 100):
+    def __init__(self, color, pos, radius):
         self.finished = False
         self.radius = radius
         self.pos = pos
@@ -173,38 +173,66 @@ class slider():
     def handle_event(self, event):
         global mouse_pos
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_x] or keys[pygame.K_z]:
-            if mouse_pos.distance_to(self.slider_ball_pos) <= 50 and self.progress != 1:
-                approach_circles[sliders.index(self)].radius = 50
-                approach_circles[sliders.index(self)].pos = self.slider_ball_pos
-                print('sliding')
-        if event.type == pygame.KEYUP:
+        if (keys[pygame.K_x] or keys[pygame.K_z]) and mouse_pos.distance_to(self.slider_ball_pos) <= 50 and self.progress != 1:
+            # approach_circles[sliders.index(self)].radius = 50
+            approach_circles[sliders.index(self)].pos = self.slider_ball_pos
+            
+        elif pygame.time.get_ticks() > self.start_time + self.duration / 5:
+            self.click(event)
+            approach_circles[sliders.index(self)].finished = True
+            self.finished = True
+            
+        if event.type == pygame.KEYUP and mouse_pos.distance_to(self.slider_ball_pos) <= 50:
             if event.key == pygame.K_x or event.key == pygame.K_z:
                 self.click(event)
+                approach_circles[sliders.index(self)].finished = True
+                self.finished = True
+        if event.type == pygame.KEYDOWN and mouse_pos.distance_to(self.slider_ball_pos) <= 50:
+            if event.key == pygame.K_x or event.key == pygame.K_z:
+                Circle.click(circles[approach_circles.index(approach_circles[sliders.index(self)])], event)
+        
 
     def draw(self):
+
+        start = pygame.Vector2(self.start_pos)
+        end = pygame.Vector2(self.end_pos)
+        
+
+        direction = (end - start).normalize()
+        perpendicular = pygame.Vector2(-direction.y, direction.x) * 50
+
+        p1 = start + perpendicular
+        p2 = start - perpendicular
+        p3 = end - perpendicular
+        p4 = end + perpendicular
+
         pygame.draw.line(screen, self.color, self.start_pos, self.end_pos, 100)
+        pygame.draw.polygon(screen, self.color, [p1, p2, p3, p4])
         pygame.draw.circle(screen, "white", self.start_pos, 50)
         pygame.draw.circle(screen, "white", self.end_pos, 50)
+
         pygame.draw.circle(screen, "green", self.slider_ball_pos, 50)
-        # print(pygame.time.get_ticks(), self.start_time, self.progress)
 
 
 
 
-sliders = [slider("white", (200,200), (500, 350), 5000)]
+
+sliders = [slider("white", (200,200), (500, 200), 2000)]
 circles = [Circle("cyan", "black", "1", Circle.click, (700, 600), 50)]
 approach_circles = []
 
 for i in sliders:
-    approach_circles.append(Approach_Circle("white", i.start_pos))
+    approach_circles.append(Approach_Circle("white", i.start_pos, 100))
 
 for i in circles:
-    approach_circles.append(Approach_Circle("white", i.circle_pos))
+    approach_circles.append(Approach_Circle("white", i.circle_pos, 100))
 
 
 
 while running:
+    sliders = [s for s in sliders if s.finished == False]
+    approach_circles = [a for a in approach_circles if a.finished == False]
+
     mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
     if status == "menu":
         Main()
