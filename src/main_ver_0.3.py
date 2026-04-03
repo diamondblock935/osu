@@ -1,6 +1,8 @@
 import math
 import pygame
 import random
+import json
+from open_lvl import load_level
 
 
 pygame.init()
@@ -221,10 +223,18 @@ class slider():
 
        
 
-sliders = [slider("white", (200,200), (500, 200), 2000, 5000), slider("white", (500, 500), (800, 500), 1000, 8500)]
-circles = [Circle("cyan", "black", "1", (700, 600), 50, 3000), Circle("yellow", "black", "1", (400, 400), 50, 7300)]
+sliders = []
+circles = []
 circle_approach = []
 slider_approach = []
+
+lvl_1 = load_level('lvl1.txt')
+
+for i in lvl_1["objects"]:
+    if i["type"] == "circle":
+        circles.append(Circle("white", "black", str(i["text"]), i["pos"], i["radius"], i["start_time"]))
+    elif i["type"] == "slider":
+        sliders.append(slider("white", i["start_pos"], i["end_pos"], i["duration"], i["start_time"]))
 
 for i in sliders:
     slider_approach.append(Approach_Circle("white", i.start_pos, 100))
