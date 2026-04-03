@@ -40,7 +40,7 @@ def Main():
     
 
 class Circle():
-    def __init__(self, color, text_col, text, command, pos, radius, start_time):
+    def __init__(self, color, text_col, text, pos, radius, start_time):
         self.finished = False
         self.circle_pos = pos
         self.radius = radius
@@ -48,7 +48,6 @@ class Circle():
         self.color = color
         self.text_col = text_col
         self.start_time = start_time
-        self.command = command
         self.original_color = self.color
 
     
@@ -60,9 +59,8 @@ class Circle():
         self.textPos = self.innertext.get_rect(center = self.circle_pos)
         screen.blit(self.innertext, self.textPos)
 
-
-        
-        
+        if circle_approach[circles.index(self)].radius <= self.radius - 15:
+            self.click(None)
 
     def handle_event(self, event):
         global mouse_pos
@@ -70,10 +68,8 @@ class Circle():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_x or event.key == pygame.K_z:
                 if mouse_pos.distance_to(self.circle_pos) <= self.radius:
-                    self.command(self, event)
-                    self.color = "green"
+                    self.click(event)
                     
-                
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_x or event.key == pygame.K_z:
                 self.color = self.original_color
@@ -102,7 +98,6 @@ class Circle():
             score += self.score_add + self.score_add * combo / 10
             combo += 1
             
-        self.text = str(int(self.text) + 1)
         score_popup_timer = 20
         score_popup_pos = (self.circle_pos[0] -score_add_text.get_width() // 2, self.circle_pos[1] - score_add_text.get_height() // 2)
         self.finished = True
@@ -168,6 +163,7 @@ class slider():
             score_add_text = smol_font.render(self.score_add, True, "red")
             combo = 0
 
+        
         if type(self.score_add) == int:
             score += self.score_add + self.score_add * combo / 5
             combo += 1
@@ -218,12 +214,15 @@ class slider():
 
         pygame.draw.circle(screen, "green", self.slider_ball_pos, 50)
 
+        if slider_approach[sliders.index(self)].radius > 0 and slider_approach[sliders.index(self)].radius <= 40:
+            self.click(event)
+            slider_approach[sliders.index(self)].finished = True
+            self.finished = True
 
-
-
+       
 
 sliders = [slider("white", (200,200), (500, 200), 2000, 5000), slider("white", (500, 500), (800, 500), 1000, 8500)]
-circles = [Circle("cyan", "black", "1", Circle.click, (700, 600), 50, 3000), Circle("yellow", "black", "1", Circle.click, (400, 400), 50, 7300)]
+circles = [Circle("cyan", "black", "1", (700, 600), 50, 3000), Circle("yellow", "black", "1", (400, 400), 50, 7300)]
 circle_approach = []
 slider_approach = []
 
@@ -293,7 +292,6 @@ while running:
                 i.draw()
 
         
-        print(time_elapsed)
         if score_popup_timer > 0:
             score_popup_timer -= 1
             screen.blit(score_add_text, score_popup_pos)
