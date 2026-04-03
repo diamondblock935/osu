@@ -1,5 +1,4 @@
 import math
-
 import pygame
 import random
 
@@ -21,6 +20,7 @@ score_popup_timer = 0
 score_popup_pos = (0, 0)
 score_add_text = None
 status = "menu"
+level_start_time = 0
 
 # def position(radius):
 #         pos = [random.randint(radius,width - radius) , random.randint(radius, height - radius)]
@@ -141,7 +141,8 @@ class slider():
         self.slider_ball_pos = self.start_pos
 
     def slide(self, event):
-        self.progress = (pygame.time.get_ticks() - self.start_time) / self.duration
+        global time_elapsed
+        self.progress = (time_elapsed - self.start_time) / self.duration
         self.progress = max(0, min(1, self.progress)) 
         self.slider_ball_pos = pygame.Vector2(self.start_pos).lerp(self.end_pos, self.progress)
         if self.progress >= 1:
@@ -175,13 +176,13 @@ class slider():
         score_popup_pos = (self.end_pos[0] -score_add_text.get_width() // 2, self.end_pos[1] - score_add_text.get_height() // 2)
 
     def handle_event(self, event):
-        global mouse_pos
+        global mouse_pos, time_elapsed
         keys = pygame.key.get_pressed()
         if (keys[pygame.K_x] or keys[pygame.K_z]) and mouse_pos.distance_to(self.slider_ball_pos) <= 70 and self.progress != 1:
             slider_approach[sliders.index(self)].radius = 0
             pygame.draw.circle(screen, "cyan", self.slider_ball_pos, 70, 3)
             
-        elif pygame.time.get_ticks() > self.start_time + self.duration / 5:
+        elif time_elapsed > self.start_time + self.duration / 5:
             self.click(event)
             slider_approach[sliders.index(self)].finished = True
             self.finished = True
@@ -235,10 +236,7 @@ for i in circles:
 
 
 while running:
-    sliders = [s for s in sliders if s.finished == False]
-    circles = [c for c in circles if c.finished == False]
-    slider_approach = [a for a in slider_approach if a.finished == False]
-    circle_approach = [a for a in circle_approach if a.finished == False]
+    
 
     mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
     if status == "menu":
@@ -251,7 +249,15 @@ while running:
                     pygame.quit()
                 elif event.key == pygame.K_RETURN:
                     status = "running"
+                    level_start_time = pygame.time.get_ticks()
     if status == "running":
+        time_elapsed = pygame.time.get_ticks() - level_start_time
+
+        sliders = [s for s in sliders if s.finished == False]
+        circles = [c for c in circles if c.finished == False]
+        slider_approach = [a for a in slider_approach if a.finished == False]
+        circle_approach = [a for a in circle_approach if a.finished == False]
+
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
@@ -273,21 +279,21 @@ while running:
         pygame.display.flip()
         screen.fill("black")
         for i in sliders:
-            if not i.finished and pygame.time.get_ticks() >= i.start_time - 4000 * difficulty / fps:
+            if not i.finished and time_elapsed >= i.start_time - 4000 * difficulty / fps:
                 i.draw()
                 i.slide(event)
         for i in circles:
-            if not i.finished and pygame.time.get_ticks() >= i.start_time - 4000 * difficulty / fps:
+            if not i.finished and time_elapsed >= i.start_time - 4000 * difficulty / fps:
                 i.draw()
         for s in slider_approach:
-            if sliders[slider_approach.index(s)].start_time - 4000 * difficulty / fps <= pygame.time.get_ticks():
+            if sliders[slider_approach.index(s)].start_time - 4000 * difficulty / fps <= time_elapsed:
                 s.draw()
         for i in circle_approach:
-            if circles[circle_approach.index(i)].start_time - 4000 * difficulty / fps <= pygame.time.get_ticks():
+            if circles[circle_approach.index(i)].start_time - 4000 * difficulty / fps <= time_elapsed:
                 i.draw()
 
         
-
+        print(time_elapsed)
         if score_popup_timer > 0:
             score_popup_timer -= 1
             screen.blit(score_add_text, score_popup_pos)
