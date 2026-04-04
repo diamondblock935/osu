@@ -3,8 +3,7 @@ import os
 import pygame
 import random
 import json
-from open_lvl import load_level, open_level
-from objects import Circle, slider, Approach_Circle
+from open_lvl import load_level
 
 
 pygame.init()
