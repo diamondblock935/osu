@@ -1,16 +1,19 @@
 import math
+import os
 import pygame
 import random
 import json
-from open_lvl import load_level
+from open_lvl import load_level, open_level
+from objects import Circle, slider, Approach_Circle
 
 
 pygame.init()
 width, height = 1280, 720
 screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
-smol_font = pygame.font.SysFont('Arial', 23)
-Chonky_font = pygame.font.SysFont('Arial', 32)
+smol_font = pygame.font.SysFont('Arial', 20)
+medium_font = pygame.font.SysFont('Arial', 32)
+Chonky_font = pygame.font.SysFont('Arial', 64)
 
 running = True
 score = 0
@@ -24,24 +27,106 @@ score_add_text = None
 status = "menu"
 level_start_time = 0
 
+sliders = []
+circles = []
+all_objects = []
+circle_approach = []
+slider_approach = []
+
 # def position(radius):
 #         pos = [random.randint(radius,width - radius) , random.randint(radius, height - radius)]
 #         return pos
 
 
 def Main():
+    global status
+    status = "menu"
     screen.fill((0,0,0))
     
     Osu = Chonky_font.render("Osu", True, (0,106,255))
     play = smol_font.render("Press ENTER to play or press Q to exit", True, (255,255,255))
     
-    screen.blit(Osu, (width / 2 - Osu.get_width() // 2, height / 3))
-    screen.blit(play, (width / 2 - play.get_width() // 2, height / 2))
-    
-    pygame.display.flip()
+    screen.blit(Osu, (width / 2 - Osu.get_width() // 2, height / 4))
     
 
+def level_select():
+    global status
+    status = "level_select"
+    screen.fill((0,0,0))
+    
+    Levels = Chonky_font.render("Levels", True, (0,106,255))
+    
+    screen.blit(Levels, (width / 2 - Levels.get_width() // 2, height / 10))
+
+def load_level_files():
+    level_folder = "levels"
+    files = []
+
+    for filename in os.listdir(level_folder):
+        if filename.endswith(".json"):
+            files.append(os.path.join(level_folder, filename))
+
+    return files
+
+def open_level(file_path):
+    global status, level_start_time, circles, sliders, all_objects, slider_approach, circle_approach, score, combo
+    level_data = load_level(file_path)
+   
+    for i in level_data["objects"]:
+        if i["type"] == "circle":
+            circles.append(Circle("white", "black", str(i["text"]), i["pos"], i["radius"], i["start_time"]))
+        elif i["type"] == "slider":
+            sliders.append(slider("white", i["start_pos"], i["end_pos"], i["duration"], i["start_time"]))
+
+    for i in sliders:
+        slider_approach.append(Approach_Circle("white", i.start_pos, 100))
+
+    for i in circles:
+        circle_approach.append(Approach_Circle("white", i.circle_pos, 100))
+        
+    all_objects.extend(circles)
+    all_objects.extend(sliders)
+    all_objects.sort(key=lambda x: x.start_time)
+    
+    level_start_time = pygame.time.get_ticks()
+    status = "running"
+    
+    
+    
+class menu_button():
+    def __init__(self,color, text, pos, size, command):
+        self.text = text
+        self.pos = pos
+        self.size = size
+        self.color = color
+        self.original_color = self.color
+        self.command = command
+
+    def draw(self):
+        pygame.draw.rect(screen, self.color, (*self.pos, *self.size))
+        button_text = smol_font.render(self.text, True, "black")
+        text_rect = button_text.get_rect(center=(self.pos[0] + self.size[0] // 2, self.pos[1] + self.size[1] // 2))
+        screen.blit(button_text, text_rect)
+
+    def handle_event(self, event):
+        global status, running
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.pos[0] <= mouse_pos.x <= self.pos[0] + self.size[0] and self.pos[1] <= mouse_pos.y <= self.pos[1] + self.size[1]:
+                if status == "level_select":
+                    self.level_path = load_level_files()[level_select_buttons.index(self)]
+                    self.command(self.level_path)
+                else:
+                    self.command()
+                    self.color = "grey"
+                
+        if event.type == pygame.MOUSEBUTTONUP:
+            self.color = self.original_color
+
+
+
+
 class Circle():
+    global screen, medium_font, smol_font, circle_approach, circles, score, combo, score_popup_timer, score_popup_pos, score_add_text
     def __init__(self, color, text_col, text, pos, radius, start_time):
         self.finished = False
         self.active = False
@@ -58,7 +143,7 @@ class Circle():
     def draw(self):
         pygame.draw.circle(screen,self.color , self.circle_pos, self.radius)
 
-        self.innertext = Chonky_font.render(self.text, True, self.text_col)
+        self.innertext = medium_font.render(self.text, True, self.text_col)
         self.textPos = self.innertext.get_rect(center = self.circle_pos)
         screen.blit(self.innertext, self.textPos)
 
@@ -112,6 +197,7 @@ class Circle():
         
 
 class Approach_Circle():
+    global difficulty, fps, screen
     def __init__(self, color, pos, radius):
         self.finished = False
         self.radius = radius
@@ -128,6 +214,7 @@ class Approach_Circle():
 
 
 class slider():
+    global screen, slider_approach, sliders, score, combo, score_popup_timer, score_popup_pos, score_add_text
     def __init__(self, color, start_pos, end_pos, duration, start_time):
         self.finished = False
         self.active = False
@@ -219,35 +306,17 @@ class slider():
         pygame.draw.circle(screen, "green", self.slider_ball_pos, 50)
 
         if slider_approach[sliders.index(self)].radius > 0 and slider_approach[sliders.index(self)].radius <= 40:
+            
             self.click(event)
             slider_approach[sliders.index(self)].finished = True
             self.finished = True
 
-       
-
-sliders = []
-circles = []
-all_objects = []
-circle_approach = []
-slider_approach = []
-
-lvl_1 = load_level('lvl1.txt')
-
-for i in lvl_1["objects"]:
-    if i["type"] == "circle":
-        circles.append(Circle("white", "black", str(i["text"]), i["pos"], i["radius"], i["start_time"]))
-    elif i["type"] == "slider":
-        sliders.append(slider("white", i["start_pos"], i["end_pos"], i["duration"], i["start_time"]))
     
-all_objects.extend(circles)
-all_objects.extend(sliders)
-all_objects.sort(key=lambda x: x.start_time)
+menu_buttons = [menu_button("white", "Play", (width / 2 - 100, height / 2), (200, 50), level_select)]
+level_select_buttons = []
 
-for i in sliders:
-    slider_approach.append(Approach_Circle("white", i.start_pos, 100))
-
-for i in circles:
-    circle_approach.append(Approach_Circle("white", i.circle_pos, 100))
+for i in load_level_files():
+    level_select_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width / 2 - 100, height / 2 + 100 + load_level_files().index(i) * 75), (200, 50), open_level))
 
 
 
@@ -257,15 +326,42 @@ while running:
     mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
     if status == "menu":
         Main()
+        
         for event in pygame.event.get():
+            for button in menu_buttons:
+                button.handle_event(event)
             if event.type == pygame.QUIT:
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     pygame.quit()
-                elif event.key == pygame.K_RETURN:
-                    status = "running"
-                    level_start_time = pygame.time.get_ticks()
+            
+        for button in menu_buttons:
+            button.draw()
+
+        pygame.display.flip()
+        screen.fill("black")
+
+    if status == "level_select":
+        level_select()
+        
+        for event in pygame.event.get():
+            for button in level_select_buttons:
+                button.handle_event(event)
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    pygame.quit()
+
+        for button in level_select_buttons:
+            button.draw()
+
+        pygame.display.flip()
+        screen.fill("black")
+
+        
     if status == "running":
         time_elapsed = pygame.time.get_ticks() - level_start_time
 
@@ -284,6 +380,13 @@ while running:
                     running = False
                 if event.key == pygame.K_m:
                     status = "menu"
+                    combo = 0
+                    score = 0
+                    circles.clear()
+                    sliders.clear()
+                    all_objects.clear()
+                    circle_approach.clear()
+                    slider_approach.clear()
             if event.type == pygame.QUIT:
                 pygame.quit()
                 running = False
@@ -322,10 +425,10 @@ while running:
             screen.blit(score_add_text, score_popup_pos)
             
 
-        score_text = Chonky_font.render(f"Score: {int(score)}", True, "white")
+        score_text = medium_font.render(f"Score: {int(score)}", True, "white")
         screen.blit(score_text, (10, 10))
 
-        combo_text = Chonky_font.render(f"Combo: {combo}", True, "white")
+        combo_text = medium_font.render(f"Combo: {combo}", True, "white")
         screen.blit(combo_text, (10, height - 10 - combo_text.get_height()))
             
         clock.tick(fps) 
