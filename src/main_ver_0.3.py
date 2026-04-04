@@ -17,14 +17,15 @@ Chonky_font = pygame.font.SysFont('Arial', 64)
 running = True
 score = 0
 combo = 0
-fps = 60
-difficulty = 8
+fps = 30
+difficulty = 10
 mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
 score_popup_timer = 0
 score_popup_pos = (0, 0)
 score_add_text = None
 status = "menu"
 level_start_time = 0
+approach_speed = 10 * difficulty / fps
 
 sliders = []
 circles = []
@@ -86,7 +87,7 @@ def open_level(file_path):
     all_objects.extend(circles)
     all_objects.extend(sliders)
     all_objects.sort(key=lambda x: x.start_time)
-    
+
     level_start_time = pygame.time.get_ticks()
     status = "running"
     
@@ -196,7 +197,7 @@ class Circle():
         
 
 class Approach_Circle():
-    global difficulty, fps, screen
+    global difficulty, fps, screen, approach_speed
     def __init__(self, color, pos, radius):
         self.finished = False
         self.radius = radius
@@ -206,7 +207,7 @@ class Approach_Circle():
 
     def draw(self):
         pygame.draw.circle(screen,self.color , self.pos, self.radius, 3)
-        self.radius -= 10 * difficulty / fps
+        self.radius -= approach_speed
         # if self.radius <= 40:
         #     Circle.click(circles[approach_circles.index(self)], None)
         #     self.radius = 100
@@ -405,17 +406,17 @@ while running:
         pygame.display.flip()
         screen.fill("black")
         for i in sliders:
-            if not i.finished and time_elapsed >= i.start_time - 4000 * difficulty / fps:
+            if not i.finished and time_elapsed >= i.start_time - (50 / approach_speed) * 1000/ fps:
                 i.draw()
                 i.slide(event)
         for i in circles:
-            if not i.finished and time_elapsed >= i.start_time - 4000 * difficulty / fps:
+            if not i.finished and time_elapsed >= i.start_time - (50 / approach_speed) * 1000/ fps:
                 i.draw()
         for s in slider_approach:
-            if sliders[slider_approach.index(s)].start_time - 4000 * difficulty / fps <= time_elapsed:
+            if sliders[slider_approach.index(s)].start_time - (50 / approach_speed) * 1000/ fps <= time_elapsed:
                 s.draw()
         for i in circle_approach:
-            if circles[circle_approach.index(i)].start_time - 4000 * difficulty / fps <= time_elapsed:
+            if circles[circle_approach.index(i)].start_time - (50 / approach_speed) * 1000/ fps <= time_elapsed:
                 i.draw()
 
         
