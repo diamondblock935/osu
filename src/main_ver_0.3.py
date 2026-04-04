@@ -17,14 +17,16 @@ Chonky_font = pygame.font.SysFont('Arial', 64)
 running = True
 score = 0
 combo = 0
-fps = 30
-difficulty = 10
-mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
-score_popup_timer = 0
+curent_max_combo = 0 #  highest combo possible at the moment, changes with every hit object, is used to calculate accuracy
+curent_max_score = 0 #  highest score possible at the moment, changes with every hit object, is used to calculate accuracy
+accuracy = 0 #  % curent max score / score, changes with every hit object
+fps = 60  
+difficulty = 8  #1-10, 10 being the hardest, changes the approach rate
+score_popup_timer = 0 
 score_popup_pos = (0, 0)
-score_add_text = None
-status = "menu"
-level_start_time = 0
+score_add_text = None # changes when you hit an object (x, 50, 100 or 300 depending on your timing)
+status = "menu" # starts in menu
+level_start_time = 0 # time when the level starts, used to calculate time elapsed (is set when the level is opened in open_level function)
 approach_speed = 10 * difficulty / fps
 
 sliders = []
@@ -130,6 +132,7 @@ class Circle():
     def __init__(self, color, text_col, text, pos, radius, start_time):
         self.finished = False
         self.active = False
+        self.clicked = 0
         self.circle_pos = pos
         self.radius = radius
         self.text = text
@@ -163,36 +166,43 @@ class Circle():
                 self.color = self.original_color
 
     def click(self, event):
-        global score, combo, score_popup_timer, score_popup_pos, score_add_text
-        
-        if circle_approach[circles.index(self)].radius - self.radius >= 32 or circle_approach[circles.index(self)].radius <= self.radius - 10:
-            self.score_add = 'x'
-            score_add_text = smol_font.render(self.score_add, True, "red")
-            combo = 0
+        global score, combo, score_popup_timer, score_popup_pos, score_add_text, curent_max_combo, curent_max_score
 
-        elif circle_approach[circles.index(self)].radius - self.radius <= 7:
-            self.score_add = 300
-            score_add_text = smol_font.render(str(self.score_add), True, "cyan")
+        if self.clicked == 0: 
+            if circle_approach[circles.index(self)].radius - self.radius >= 32 or circle_approach[circles.index(self)].radius <= self.radius - 10:
+                self.score_add = 'x'
+                score_add_text = smol_font.render(self.score_add, True, "red")
+                combo = 0
 
-        elif circle_approach[circles.index(self)].radius - self.radius <= 21:
-            self.score_add = 100
-            score_add_text = smol_font.render(str(self.score_add), True, "green")
+            elif circle_approach[circles.index(self)].radius - self.radius <= 7:
+                self.score_add = 300
+                score_add_text = smol_font.render(str(self.score_add), True, "cyan")
 
-        elif circle_approach[circles.index(self)].radius - self.radius <= 32:
-            self.score_add = 50
-            score_add_text = smol_font.render(str(self.score_add), True, "yellow")
+            elif circle_approach[circles.index(self)].radius - self.radius <= 21:
+                self.score_add = 100
+                score_add_text = smol_font.render(str(self.score_add), True, "green")
 
-        if type(self.score_add) == int:
-            score += self.score_add + self.score_add * combo / 10
-            combo += 1
+            elif circle_approach[circles.index(self)].radius - self.radius <= 32:
+                self.score_add = 50
+                score_add_text = smol_font.render(str(self.score_add), True, "yellow")
+
+
+            curent_max_score += 300 + 300 * combo / 10
+            if type(self.score_add) == int:
+                score += self.score_add + self.score_add * combo / 10
+                combo += 1
+                
+            score_popup_timer = 20
+            score_popup_pos = (self.circle_pos[0] -score_add_text.get_width() // 2, self.circle_pos[1] - score_add_text.get_height() // 2)
+            self.finished = True
+            circle_approach[circles.index(self)].finished = True
+
             
-        score_popup_timer = 20
-        score_popup_pos = (self.circle_pos[0] -score_add_text.get_width() // 2, self.circle_pos[1] - score_add_text.get_height() // 2)
-        self.finished = True
-        circle_approach[circles.index(self)].finished = True
-        # self.circle_pos = position(self.radius)
-        # circle_approach[circles.index(self)].pos = self.circle_pos
-        # circle_approach[circles.index(self)].radius = 100
+
+            self.clicked += 1
+
+            print(curent_max_combo)
+        
 
         
 
@@ -218,6 +228,7 @@ class slider():
     def __init__(self, color, start_pos, end_pos, duration, start_time):
         self.finished = False
         self.active = False
+        self.clicked = 0
         self.color = color
         self.start_pos = start_pos
         self.end_pos = end_pos
@@ -238,29 +249,36 @@ class slider():
             
     
     def click(self, event):
-        global score, combo, score_popup_timer, score_popup_pos, score_add_text
+        global score, combo, score_popup_timer, score_popup_pos, score_add_text, curent_max_combo, curent_max_score
+        if self.clicked == 0:
         
-        if self.progress >= 0.95:
-            self.score_add = 300
-            score_add_text = smol_font.render(str(self.score_add), True, "cyan")
-        elif self. progress >= 0.85:
-            self.score_add = 100
-            score_add_text = smol_font.render(str(self.score_add), True, "green")
-        elif self.progress >= 0.7:
-            self.score_add = 50
-            score_add_text = smol_font.render(str(self.score_add), True, "yellow")
-        else:
-            self.score_add = 'x'
-            score_add_text = smol_font.render(self.score_add, True, "red")
-            combo = 0
+            if self.progress >= 0.95:
+                self.score_add = 300
+                score_add_text = smol_font.render(str(self.score_add), True, "cyan")
+            elif self. progress >= 0.85:
+                self.score_add = 100
+                score_add_text = smol_font.render(str(self.score_add), True, "green")
+            elif self.progress >= 0.7:
+                self.score_add = 50
+                score_add_text = smol_font.render(str(self.score_add), True, "yellow")
+            else:
+                self.score_add = 'x'
+                score_add_text = smol_font.render(self.score_add, True, "red")
+                combo = 0
 
-        
-        if type(self.score_add) == int:
-            score += self.score_add + self.score_add * combo / 5
-            combo += 1
+            curent_max_score += 300 + 300 * combo / 5
+            if type(self.score_add) == int:
+                score += self.score_add + self.score_add * combo / 5
+                combo += 1
+                
+            score_popup_timer = 20
+            score_popup_pos = (self.end_pos[0] -score_add_text.get_width() // 2, self.end_pos[1] - score_add_text.get_height() // 2)
+
             
-        score_popup_timer = 20
-        score_popup_pos = (self.end_pos[0] -score_add_text.get_width() // 2, self.end_pos[1] - score_add_text.get_height() // 2)
+            self.clicked += 1
+
+            print(curent_max_combo)
+        
 
     def handle_event(self, event):
         global mouse_pos, time_elapsed
@@ -273,6 +291,7 @@ class slider():
             self.click(event)
             slider_approach[sliders.index(self)].finished = True
             self.finished = True
+            
             
         if event.type == pygame.KEYUP and mouse_pos.distance_to(self.slider_ball_pos) <= 50:
             if event.key == pygame.K_x or event.key == pygame.K_z:
@@ -382,6 +401,8 @@ while running:
                     status = "menu"
                     combo = 0
                     score = 0
+                    curent_max_combo = 0
+                    curent_max_score = 0
                     circles.clear()
                     sliders.clear()
                     all_objects.clear()
@@ -421,12 +442,17 @@ while running:
 
         
         if score_popup_timer > 0:
-            score_popup_timer -= 1
+            score_popup_timer -= 60 / fps
             screen.blit(score_add_text, score_popup_pos)
             
 
         score_text = medium_font.render(f"Score: {int(score)}", True, "white")
         screen.blit(score_text, (10, 10))
+        accuracy = score / curent_max_score * 100 if curent_max_score > 0 else 100
+        accuracy_text = medium_font.render(f"{accuracy:.2f}%", True, "white")
+        screen.blit(accuracy_text, (10, 15 + score_text.get_height()))
+
+        
 
         combo_text = medium_font.render(f"Combo: {combo}", True, "white")
         screen.blit(combo_text, (10, height - 10 - combo_text.get_height()))
