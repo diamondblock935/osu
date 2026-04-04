@@ -44,6 +44,7 @@ def Main():
 class Circle():
     def __init__(self, color, text_col, text, pos, radius, start_time):
         self.finished = False
+        self.active = False
         self.circle_pos = pos
         self.radius = radius
         self.text = text
@@ -129,6 +130,7 @@ class Approach_Circle():
 class slider():
     def __init__(self, color, start_pos, end_pos, duration, start_time):
         self.finished = False
+        self.active = False
         self.color = color
         self.start_pos = start_pos
         self.end_pos = end_pos
@@ -225,6 +227,7 @@ class slider():
 
 sliders = []
 circles = []
+all_objects = []
 circle_approach = []
 slider_approach = []
 
@@ -235,6 +238,10 @@ for i in lvl_1["objects"]:
         circles.append(Circle("white", "black", str(i["text"]), i["pos"], i["radius"], i["start_time"]))
     elif i["type"] == "slider":
         sliders.append(slider("white", i["start_pos"], i["end_pos"], i["duration"], i["start_time"]))
+    
+all_objects.extend(circles)
+all_objects.extend(sliders)
+all_objects.sort(key=lambda x: x.start_time)
 
 for i in sliders:
     slider_approach.append(Approach_Circle("white", i.start_pos, 100))
@@ -266,6 +273,9 @@ while running:
         circles = [c for c in circles if c.finished == False]
         slider_approach = [a for a in slider_approach if a.finished == False]
         circle_approach = [a for a in circle_approach if a.finished == False]
+        all_objects = [o for o in all_objects if o.finished == False]
+
+        
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -279,9 +289,14 @@ while running:
                 running = False
 
             for i in circles:
-                i.handle_event(event)
+                if i.active:
+                    i.handle_event(event)
             for i in sliders:
-                i.handle_event(event)
+                if i.active:
+                    i.handle_event(event)
+
+        if len(all_objects) > 0:
+            all_objects[0].active = True
 
         
         
