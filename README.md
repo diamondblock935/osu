@@ -3,3 +3,13 @@ Popis:
     Čím přesnější budete, tím více bodů získáte. Pokud minete, ztrácíte životy. Když vám životy klesnou na 0, musíte od začátku.
     V základu už bude několik "levelů", popř. bude level editor, kde si můžete vytvořit vlastní.
     
+
+
+
+ver_0.3:
+- byl přidán slider
+- upraveno hlavní menu
+- level selector
+- mechanika životů a přesnost
+- lepší grafika
+- bug fixy
