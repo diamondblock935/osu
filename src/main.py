@@ -457,6 +457,10 @@ while running:
 
         hp_bar()
 
+        if len(all_objects) == 0:
+            end_level()
+            status = "level_select" # placehoder, will be changed to "level complete" in the future
+
         
 
         for event in pygame.event.get():
