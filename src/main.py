@@ -133,6 +133,7 @@ def hp_bar():
     if hp <= 0:
         end_level()
         status = "level_select" # placehoder, will be changed to "level failed" in the future
+        print("you failed the level")
     elif hp > max_hp:
         hp = max_hp
 
@@ -460,6 +461,7 @@ while running:
         if len(all_objects) == 0:
             end_level()
             status = "level_select" # placehoder, will be changed to "level complete" in the future
+            print("you completed the level")
 
         
 
