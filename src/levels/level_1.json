@@ -1,0 +1,48 @@
+{
+  "objects": [
+    { "type": "circle", "pos": [300, 200], "radius": 50, "start_time": 2000 },
+
+    { "type": "slider", "start_pos": [500, 500], "end_pos": [700, 300], "duration": 900, "start_time": 3500 },
+
+    { "type": "circle", "pos": [600, 350], "radius": 50, "start_time": 4600 },
+
+    { "type": "circle", "pos": [600, 355], "radius": 50, "start_time": 4800 },
+
+    { "type": "circle", "pos": [600, 360], "radius": 50, "start_time": 5000 },
+
+    { "type": "slider", "start_pos": [200, 600], "end_pos": [400, 450], "duration": 800, "start_time": 5800 },
+
+    { "type": "circle", "pos": [900, 150], "radius": 50, "start_time": 6700 },
+
+    { "type": "slider", "start_pos": [900, 500], "end_pos": [1100, 650], "duration": 1000, "start_time": 8000 },
+
+    { "type": "circle", "pos": [200, 500], "radius": 50, "start_time": 9300 },
+
+    { "type": "slider", "start_pos": [300, 150], "end_pos": [600, 200], "duration": 700, "start_time": 10500 },
+
+    { "type": "circle", "pos": [1100, 400], "radius": 50, "start_time": 11500 },
+
+    { "type": "slider", "start_pos": [1000, 300], "end_pos": [800, 100], "duration": 900, "start_time": 12800 },
+
+    { "type": "circle", "pos": [700, 600], "radius": 50, "start_time": 14000 },
+
+    { "type": "slider", "start_pos": [150, 250], "end_pos": [350, 350], "duration": 600, "start_time": 15200 },
+
+    { "type": "circle", "pos": [400, 300], "radius": 50, "start_time": 16200 },
+
+    { "type": "slider", "start_pos": [700, 700], "end_pos": [900, 500], "duration": 950, "start_time": 17500 },
+
+    { "type": "circle", "pos": [1000, 250], "radius": 50, "start_time": 19000 },
+
+    { "type": "slider", "start_pos": [400, 400], "end_pos": [200, 200], "duration": 850, "start_time": 20300 },
+
+    { "type": "circle", "pos": [500, 100], "radius": 50, "start_time": 21600 },
+
+    { "type": "slider", "start_pos": [1100, 150], "end_pos": [900, 350], "duration": 750, "start_time": 22900 },
+
+    { "type": "circle", "pos": [850, 550], "radius": 50, "start_time": 24000 },
+
+    { "type": "slider", "start_pos": [600, 300], "end_pos": [600, 600], "duration": 1000, "start_time": 25500 }
+  ]
+}
+

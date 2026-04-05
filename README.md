@@ -1,5 +1,8 @@
-Popis:
-    Rytmická hra na styl osu!, cílem hry je do rytmu klikat na objekty(zatím jen kolečka nebo slidery, popř. další, jestli mě napadnou nějaké dobré), které se budou objevovat na obrazovce.
-    Čím přesnější budete, tím více bodů získáte. Pokud minete, ztrácíte životy. Když vám životy klesnou na 0, musíte od začátku.
-    V základu už bude několik "levelů", popř. bude level editor, kde si můžete vytvořit vlastní.
+Verze 0.1:
+
+
+Toto je první prototyp. 
+Na obrazovce se objeví kolečko a kolem něj zmenšující se kružnice. Když na kolečko najedete kurzorem myši a zmáčknete 'x' nebo 'z', kolečko změní pozici a dostanete skóre podle toho, jak přesní jste (čím blíž bude kružnice k okraji kolečka, tím víc skóre)
+
+Když se vám to povede vícekrát po sobě, získáváte kombo. To vám zvyšuje skóre, které dostáváte za následujíci kliky. Pokud ovšem minete, kombo ztratíte.
     
