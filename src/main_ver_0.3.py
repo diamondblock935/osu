@@ -9,6 +9,7 @@ from open_lvl import load_level
 pygame.init()
 width, height = 1280, 720
 screen = pygame.display.set_mode((width, height))
+transparent_surface = pygame.Surface((width, height), pygame.SRCALPHA)
 clock = pygame.time.Clock()
 smol_font = pygame.font.SysFont('Arial', 20)
 medium_font = pygame.font.SysFont('Arial', 32)
@@ -20,13 +21,18 @@ combo = 0
 curent_max_combo = 0 #  highest combo possible at the moment, changes with every hit object, is used to calculate accuracy
 curent_max_score = 0 #  highest score possible at the moment, changes with every hit object, is used to calculate accuracy
 accuracy = 0 #  % curent max score / score, changes with every hit object
-fps = 60  
+fps = 120
 difficulty = 8  #1-10, 10 being the hardest, changes the approach rate
+hp_diff = 5 # 1-10, 10 being the hardest, changes how much hp you lose when you miss an object and how much you gain when you hit an object
+hp_loss = 2 * hp_diff / fps 
+max_hp = 100
+hp = max_hp
 score_popup_timer = 0 
 score_popup_pos = (0, 0)
 score_add_text = None # changes when you hit an object (x, 50, 100 or 300 depending on your timing)
 status = "menu" # starts in menu
 level_start_time = 0 # time when the level starts, used to calculate time elapsed (is set when the level is opened in open_level function)
+hp_loss_start = 0 # time when you start losing hp, used to calculate hp loss over time (is set when you miss an object in Circle and slider click functions)
 approach_speed = 10 * difficulty / fps
 
 sliders = []
@@ -45,7 +51,7 @@ def Main():
     status = "menu"
     screen.fill((0,0,0))
     
-    Osu = Chonky_font.render("Osu", True, (0,106,255))
+    Osu = Chonky_font.render("Osu?", True, (0,106,255))
     play = smol_font.render("Press ENTER to play or press Q to exit", True, (255,255,255))
     
     screen.blit(Osu, (width / 2 - Osu.get_width() // 2, height / 4))
@@ -71,14 +77,17 @@ def load_level_files():
     return files
 
 def open_level(file_path):
-    global status, level_start_time, circles, sliders, all_objects, slider_approach, circle_approach, score, combo
+    global status, level_start_time, circles, sliders, all_objects, slider_approach, circle_approach, score, combo, hp, max_hp
     level_data = load_level(file_path)
    
     for i in level_data["objects"]:
         if i["type"] == "circle":
-            circles.append(Circle("white", "black", str(i["text"]), i["pos"], i["radius"], i["start_time"]))
+            circles.append(Circle((100, 200, 255, 167), "black", i["pos"], i["radius"], i["start_time"]))
         elif i["type"] == "slider":
-            sliders.append(slider("white", i["start_pos"], i["end_pos"], i["duration"], i["start_time"]))
+            sliders.append(slider((255, 255, 255, 167), i["start_pos"], i["end_pos"], i["duration"], i["start_time"]))
+
+    sliders.sort(key=lambda x: x.start_time, reverse=True)
+    circles.sort(key=lambda x: x.start_time, reverse=True)
 
     for i in sliders:
         slider_approach.append(Approach_Circle("white", i.start_pos, 100))
@@ -90,8 +99,49 @@ def open_level(file_path):
     all_objects.extend(sliders)
     all_objects.sort(key=lambda x: x.start_time)
 
+    hp = max_hp
+    
+    for i in all_objects:
+        i.text = str(all_objects.index(i) + 1)
     level_start_time = pygame.time.get_ticks()
     status = "running"
+
+def end_level():
+    global status, score, combo, curent_max_combo, curent_max_score, circles, sliders, all_objects, slider_approach, circle_approach, hp, max_hp
+    score = 0
+    combo = 0
+    curent_max_combo = 0
+    curent_max_score = 0
+    hp = max_hp
+    circles.clear()
+    sliders.clear()
+    all_objects.clear()
+    circle_approach.clear()
+    slider_approach.clear()
+
+def hp_bar():
+    global hp, max_hp, hp_loss_start, hp_loss, status, combo
+
+    if combo == 0:
+        hp_loss_start = pygame.time.get_ticks()
+
+    if hp_loss_start + 5000 >= pygame.time.get_ticks():
+        hp -= hp_loss
+    else:
+        hp_loss_start = 0
+
+    if hp <= 0:
+        end_level()
+        status = "level_select" # placehoder, will be changed to "level failed" in the future
+    elif hp > max_hp:
+        hp = max_hp
+
+    pygame.draw.rect(screen, "red", (width - 210, 10, 200, 30))
+    pygame.draw.rect(screen, "green", (width - 210, 10, 200 * (hp / max_hp), 30))
+def hp_change(amount):
+    global hp, max_hp
+    hp += amount
+    hp = max(0, min(hp, max_hp))
     
     
     
@@ -129,13 +179,13 @@ class menu_button():
 
 class Circle():
     global screen, medium_font, smol_font, circle_approach, circles, score, combo, score_popup_timer, score_popup_pos, score_add_text
-    def __init__(self, color, text_col, text, pos, radius, start_time):
+    def __init__(self, color, text_col, pos, radius, start_time):
         self.finished = False
         self.active = False
         self.clicked = 0
         self.circle_pos = pos
         self.radius = radius
-        self.text = text
+        self.text = ""
         self.color = color
         self.text_col = text_col
         self.start_time = start_time
@@ -144,7 +194,8 @@ class Circle():
     
 
     def draw(self):
-        pygame.draw.circle(screen,self.color , self.circle_pos, self.radius)
+        pygame.draw.circle(transparent_surface,self.color , self.circle_pos, self.radius)
+        pygame.draw.circle(screen, "white", self.circle_pos, 50, 5)
 
         self.innertext = medium_font.render(self.text, True, self.text_col)
         self.textPos = self.innertext.get_rect(center = self.circle_pos)
@@ -152,6 +203,8 @@ class Circle():
 
         if circle_approach[circles.index(self)].radius <= self.radius - 15:
             self.click(None)
+
+        
 
     def handle_event(self, event):
         global mouse_pos
@@ -173,6 +226,7 @@ class Circle():
                 self.score_add = 'x'
                 score_add_text = smol_font.render(self.score_add, True, "red")
                 combo = 0
+                hp_change(-3 * hp_diff)
 
             elif circle_approach[circles.index(self)].radius - self.radius <= 7:
                 self.score_add = 300
@@ -191,6 +245,8 @@ class Circle():
             if type(self.score_add) == int:
                 score += self.score_add + self.score_add * combo / 10
                 combo += 1
+                hp_change(self.score_add / (5 * hp_diff))
+            
                 
             score_popup_timer = 20
             score_popup_pos = (self.circle_pos[0] -score_add_text.get_width() // 2, self.circle_pos[1] - score_add_text.get_height() // 2)
@@ -225,7 +281,7 @@ class Approach_Circle():
 
 class slider():
     global screen, slider_approach, sliders, score, combo, score_popup_timer, score_popup_pos, score_add_text
-    def __init__(self, color, start_pos, end_pos, duration, start_time):
+    def __init__(self, color, start_pos, end_pos, duration, start_time, text_col = "black"):
         self.finished = False
         self.active = False
         self.clicked = 0
@@ -236,6 +292,8 @@ class slider():
         self.start_time = start_time
         self.progress = 0
         self.slider_ball_pos = self.start_pos
+        self.text = ""
+        self.text_col = text_col
 
     def slide(self, event):
         global time_elapsed
@@ -265,11 +323,13 @@ class slider():
                 self.score_add = 'x'
                 score_add_text = smol_font.render(self.score_add, True, "red")
                 combo = 0
+                hp_change(-5 * hp_diff)
 
             curent_max_score += 300 + 300 * combo / 5
             if type(self.score_add) == int:
                 score += self.score_add + self.score_add * combo / 5
                 combo += 1
+                hp_change(self.score_add / (5 * hp_diff))
                 
             score_popup_timer = 20
             score_popup_pos = (self.end_pos[0] -score_add_text.get_width() // 2, self.end_pos[1] - score_add_text.get_height() // 2)
@@ -285,7 +345,7 @@ class slider():
         keys = pygame.key.get_pressed()
         if (keys[pygame.K_x] or keys[pygame.K_z]) and mouse_pos.distance_to(self.slider_ball_pos) <= 70 and self.progress != 1:
             slider_approach[sliders.index(self)].radius = 0
-            pygame.draw.circle(screen, "cyan", self.slider_ball_pos, 70, 3)
+            pygame.draw.circle(screen, "white", self.slider_ball_pos, 70, 3)
             
         elif time_elapsed > self.start_time + self.duration / 5:
             self.click(event)
@@ -317,18 +377,23 @@ class slider():
         p3 = end - perpendicular
         p4 = end + perpendicular
 
-        pygame.draw.line(screen, self.color, self.start_pos, self.end_pos, 100)
-        pygame.draw.polygon(screen, self.color, [p1, p2, p3, p4])
-        pygame.draw.circle(screen, "white", self.start_pos, 50)
-        pygame.draw.circle(screen, "white", self.end_pos, 50)
+        pygame.draw.line(transparent_surface, self.color, self.start_pos, self.end_pos, 100)
+        pygame.draw.polygon(transparent_surface, self.color, [p1, p2, p3, p4])
+        pygame.draw.circle(transparent_surface, (255, 255, 255, 167), self.start_pos, 50)
+        pygame.draw.circle(transparent_surface, (255, 255, 255, 167) , self.end_pos, 50)
 
-        pygame.draw.circle(screen, "green", self.slider_ball_pos, 50)
+        pygame.draw.circle(transparent_surface, (100, 200, 255, 167), self.slider_ball_pos, 47)
+        pygame.draw.circle(screen, "white", self.slider_ball_pos, 50, 5)
 
         if slider_approach[sliders.index(self)].radius > 0 and slider_approach[sliders.index(self)].radius <= 40:
             
             self.click(event)
             slider_approach[sliders.index(self)].finished = True
             self.finished = True
+
+        self.innertext = medium_font.render(self.text, True, self.text_col)
+        self.textPos = self.innertext.get_rect(center = self.slider_ball_pos)
+        screen.blit(self.innertext, self.textPos)
 
     
 menu_buttons = [menu_button("white", "Play", (width / 2 - 100, height / 2), (200, 50), level_select)]
@@ -390,6 +455,8 @@ while running:
         circle_approach = [a for a in circle_approach if a.finished == False]
         all_objects = [o for o in all_objects if o.finished == False]
 
+        hp_bar()
+
         
 
         for event in pygame.event.get():
@@ -399,15 +466,7 @@ while running:
                     running = False
                 if event.key == pygame.K_m:
                     status = "menu"
-                    combo = 0
-                    score = 0
-                    curent_max_combo = 0
-                    curent_max_score = 0
-                    circles.clear()
-                    sliders.clear()
-                    all_objects.clear()
-                    circle_approach.clear()
-                    slider_approach.clear()
+                    end_level()
             if event.type == pygame.QUIT:
                 pygame.quit()
                 running = False
@@ -426,26 +485,29 @@ while running:
         
         pygame.display.flip()
         screen.fill("black")
-        for i in sliders:
-            if not i.finished and time_elapsed >= i.start_time - (50 / approach_speed) * 1000/ fps:
-                i.draw()
-                i.slide(event)
-        for i in circles:
-            if not i.finished and time_elapsed >= i.start_time - (50 / approach_speed) * 1000/ fps:
-                i.draw()
+        screen.blit(transparent_surface, (0, 0))
+        transparent_surface.fill((0, 0, 0, 0))
+        
         for s in slider_approach:
             if sliders[slider_approach.index(s)].start_time - (50 / approach_speed) * 1000/ fps <= time_elapsed:
                 s.draw()
-        for i in circle_approach:
-            if circles[circle_approach.index(i)].start_time - (50 / approach_speed) * 1000/ fps <= time_elapsed:
-                i.draw()
+        for c in circle_approach:
+            if circles[circle_approach.index(c)].start_time - (50 / approach_speed) * 1000/ fps <= time_elapsed:
+                c.draw()
+        for s in sliders:
+            if not s.finished and time_elapsed >= s.start_time - (50 / approach_speed) * 1000/ fps:
+                s.draw()
+                s.slide(event)
+        for c in circles:
+            if not c.finished and time_elapsed >= c.start_time - (50 / approach_speed) * 1000/ fps:
+                c.draw()
 
         
         if score_popup_timer > 0:
             score_popup_timer -= 60 / fps
             screen.blit(score_add_text, score_popup_pos)
             
-
+        
         score_text = medium_font.render(f"Score: {int(score)}", True, "white")
         screen.blit(score_text, (10, 10))
         accuracy = score / curent_max_score * 100 if curent_max_score > 0 else 100
