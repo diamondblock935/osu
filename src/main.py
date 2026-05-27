@@ -4,9 +4,10 @@ import pygame
 import random
 import json
 from open_lvl import load_level
-
+from level_editor import Beatmap, Level_editor, load_beatmap
 
 pygame.init()
+
 width, height = 1280, 720
 screen = pygame.display.set_mode((width, height))
 transparent_surface = pygame.Surface((width, height), pygame.SRCALPHA)
@@ -15,7 +16,6 @@ smol_font = pygame.font.SysFont('Arial', 20)
 medium_font = pygame.font.SysFont('Arial', 32)
 Chonky_font = pygame.font.SysFont('Arial', 64)
 
-running = True
 score = 0
 combo = 0
 curent_max_combo = 0 #  highest combo possible at the moment, changes with every hit object, is used to calculate accuracy
@@ -34,6 +34,7 @@ status = "menu" # starts in menu
 level_start_time = 0 # time when the level starts, used to calculate time elapsed (is set when the level is opened in open_level function)
 hp_loss_start = 0 # time when you start losing hp, used to calculate hp loss over time (is set when you miss an object in Circle and slider click functions)
 approach_speed = 10 * difficulty / fps
+approach_time = 50 / approach_speed 
 
 sliders = []
 circles = []
@@ -41,9 +42,8 @@ all_objects = []
 circle_approach = []
 slider_approach = []
 
-# def position(radius):
-#         pos = [random.randint(radius,width - radius) , random.randint(radius, height - radius)]
-#         return pos
+running = True
+
 
 
 def Main():
@@ -55,6 +55,30 @@ def Main():
     play = smol_font.render("Press ENTER to play or press Q to exit", True, (255,255,255))
     
     screen.blit(Osu, (width / 2 - Osu.get_width() // 2, height / 4))
+
+def level_editor_menu():
+    global status
+    status = "level_editor_menu"
+    screen.fill((0,0,0))
+    
+    Level_Editor = Chonky_font.render("Level Editor", True, (0,106,255))
+    
+    screen.blit(Level_Editor, (width / 2 - Level_Editor.get_width() // 2, height / 4))
+
+    
+
+
+def open_level_editor(file_path=None):
+    global status
+    status = "level_editor"
+    screen.fill((0,0,0))
+    if file_path:
+        level = load_beatmap(file_path)
+    else:
+        level = Beatmap()
+    editor = Level_editor(level)
+    editor.run()
+
     
 
 def level_select():
@@ -82,9 +106,9 @@ def open_level(file_path):
    
     for i in level_data["objects"]:
         if i["type"] == "circle":
-            circles.append(Circle((100, 200, 255, 167), "black", i["pos"], i["radius"], i["start_time"]))
+            circles.append(Circle((100, 200, 255, 106), "black", i["pos"], i["time"]))
         elif i["type"] == "slider":
-            sliders.append(slider((255, 255, 255, 167), i["start_pos"], i["end_pos"], i["duration"], i["start_time"]))
+            sliders.append(slider((255, 255, 255, 106), i["pos"], i["end_pos"], i["duration"], i["time"]))
 
     sliders.sort(key=lambda x: x.start_time, reverse=True)
     circles.sort(key=lambda x: x.start_time, reverse=True)
@@ -164,28 +188,34 @@ class menu_button():
     def handle_event(self, event):
         global status, running
         if event.type == pygame.MOUSEBUTTONDOWN:
+            
             if self.pos[0] <= mouse_pos.x <= self.pos[0] + self.size[0] and self.pos[1] <= mouse_pos.y <= self.pos[1] + self.size[1]:
+                
                 if status == "level_select":
                     self.level_path = load_level_files()[level_select_buttons.index(self)]
+                    self.command(self.level_path)
+                    
+                elif status == "level_editor_menu":
+                    self.level_path = load_level_files()[editor_menu_buttons.index(self)]
                     self.command(self.level_path)
                 else:
                     self.command()
                     self.color = "grey"
-                
+                     
         if event.type == pygame.MOUSEBUTTONUP:
             self.color = self.original_color
-
+           
 
 
 
 class Circle():
     global screen, medium_font, smol_font, circle_approach, circles, score, combo, score_popup_timer, score_popup_pos, score_add_text
-    def __init__(self, color, text_col, pos, radius, start_time):
+    def __init__(self, color, text_col, pos, start_time):
         self.finished = False
         self.active = False
         self.clicked = 0
         self.circle_pos = pos
-        self.radius = radius
+        self.radius = 50
         self.text = ""
         self.color = color
         self.text_col = text_col
@@ -258,7 +288,8 @@ class Circle():
 
             self.clicked += 1
 
-            print(curent_max_combo)
+            
+
         
 
         
@@ -290,7 +321,7 @@ class slider():
         self.start_pos = start_pos
         self.end_pos = end_pos
         self.duration = duration
-        self.start_time = start_time
+        self.start_time = start_time + approach_time
         self.progress = 0
         self.slider_ball_pos = self.start_pos
         self.text = ""
@@ -334,12 +365,8 @@ class slider():
                 
             score_popup_timer = 20
             score_popup_pos = (self.end_pos[0] -score_add_text.get_width() // 2, self.end_pos[1] - score_add_text.get_height() // 2)
-
-            
             self.clicked += 1
 
-            print(curent_max_combo)
-        
 
     def handle_event(self, event):
         global mouse_pos, time_elapsed
@@ -380,10 +407,10 @@ class slider():
 
         pygame.draw.line(transparent_surface, self.color, self.start_pos, self.end_pos, 100)
         pygame.draw.polygon(transparent_surface, self.color, [p1, p2, p3, p4])
-        pygame.draw.circle(transparent_surface, (255, 255, 255, 167), self.start_pos, 50)
-        pygame.draw.circle(transparent_surface, (255, 255, 255, 167) , self.end_pos, 50)
+        pygame.draw.circle(transparent_surface, (255, 255, 255, 106), self.start_pos, 50)
+        pygame.draw.circle(transparent_surface, (255, 255, 255, 106) , self.end_pos, 50)
 
-        pygame.draw.circle(transparent_surface, (100, 200, 255, 167), self.slider_ball_pos, 47)
+        pygame.draw.circle(transparent_surface, (100, 200, 255, 106), self.slider_ball_pos, 47)
         pygame.draw.circle(screen, "white", self.slider_ball_pos, 50, 5)
 
         if slider_approach[sliders.index(self)].radius > 0 and slider_approach[sliders.index(self)].radius <= 40:
@@ -397,12 +424,16 @@ class slider():
         screen.blit(self.innertext, self.textPos)
 
     
-menu_buttons = [menu_button("white", "Play", (width / 2 - 100, height / 2), (200, 50), level_select)]
+menu_buttons = [menu_button("white", "Play", (width / 2 - 100, height / 2), (200, 50), level_select), menu_button("white", "Level Editor", (width / 2 - 100, height / 2 + 75), (200, 50), level_editor_menu)]
 level_select_buttons = []
 
 for i in load_level_files():
     level_select_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width / 2 - 100, height / 2 + 100 + load_level_files().index(i) * 75), (200, 50), open_level))
 
+editor_menu_buttons = []
+
+for i in load_level_files():
+    editor_menu_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width / 2 - 100, height / 2 + 100 + load_level_files().index(i) * 75), (200, 50), open_level_editor))
 
 
 while running:
@@ -439,10 +470,46 @@ while running:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     pygame.quit()
+                if event.key == pygame.K_ESCAPE:
+                    status = "menu"
 
         for button in level_select_buttons:
             button.draw()
 
+        pygame.display.flip()
+        screen.fill("black")
+    
+    if status == "level_editor_menu":
+        level_editor_menu()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                if event.key == pygame.K_ESCAPE:
+                    status = "menu"
+
+        for button in editor_menu_buttons:
+            button.handle_event(event)
+        for button in editor_menu_buttons: 
+            button.draw()
+
+        
+        pygame.display.flip()
+        screen.fill("black")
+
+
+    if status == "level_editor":
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                if event.key == pygame.K_ESCAPE:
+                    status = "menu"
+        
         pygame.display.flip()
         screen.fill("black")
 
@@ -456,12 +523,14 @@ while running:
         circle_approach = [a for a in circle_approach if a.finished == False]
         all_objects = [o for o in all_objects if o.finished == False]
 
-        hp_bar()
-
         if len(all_objects) == 0:
             end_level()
             status = "level_select" # placehoder, will be changed to "level complete" in the future
             print("you completed the level")
+
+        hp_bar()
+
+        
 
         
 
@@ -495,17 +564,17 @@ while running:
         transparent_surface.fill((0, 0, 0, 0))
         
         for s in slider_approach:
-            if sliders[slider_approach.index(s)].start_time - (50 / approach_speed) * 1000/ fps <= time_elapsed:
+            if sliders[slider_approach.index(s)].start_time - (50 / approach_speed) * 1000 / fps <= time_elapsed:
                 s.draw()
         for c in circle_approach:
-            if circles[circle_approach.index(c)].start_time - (50 / approach_speed) * 1000/ fps <= time_elapsed:
+            if circles[circle_approach.index(c)].start_time - (50 / approach_speed) * 1000 / fps <= time_elapsed:
                 c.draw()
         for s in sliders:
-            if not s.finished and time_elapsed >= s.start_time - (50 / approach_speed) * 1000/ fps:
+            if not s.finished and time_elapsed >= s.start_time - (50 / approach_speed) * 1000 / fps:
                 s.draw()
                 s.slide(event)
         for c in circles:
-            if not c.finished and time_elapsed >= c.start_time - (50 / approach_speed) * 1000/ fps:
+            if not c.finished and time_elapsed >= c.start_time - (50 / approach_speed) * 1000 / fps:
                 c.draw()
 
         
