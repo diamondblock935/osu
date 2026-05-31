@@ -9,10 +9,9 @@ WINDOW_HEIGHT = 720
 CIRCLE_RADIUS = 50
 SNAP_MS = 50 
 
-BEATMAP_PATH = "levels/lvl_1.json"
 
 class Level_editor:
-    def __init__(self, beatmap):
+    def __init__(self, beatmap, file_path):
         pygame.init()
         pygame.mixer.init()
 
@@ -23,24 +22,24 @@ class Level_editor:
         self.running = True
 
         self.beatmap = beatmap
-
+        self.file_path = file_path
         # time management
         self.editor_time = 0  # ms
         self.playing = False
         self.play_start_ticks = 0  # pygame.time.get_ticks() when started
         self.play_start_time = 0   # editor_time when started
         self.drawing_slider = False
-        self.slider_points = []
         self.slider_start_time = 0
+        self.slider_points = []
 
         # load audio
-        if os.path.exists(self.beatmap.audio):
-            pygame.mixer.music.load(self.beatmap.audio)
+        if self.beatmap.audio in os.listdir("audio"):
+            pygame.mixer.music.load("audio/" + self.beatmap.audio)
         else:
             print("WARNING: audio file not found:", self.beatmap.audio)
 
     def start_playback(self):
-        if not os.path.exists(self.beatmap.audio):
+        if not self.beatmap.audio in os.listdir("audio"):
             return
         self.playing = True
         self.play_start_ticks = pygame.time.get_ticks()
@@ -91,8 +90,8 @@ class Level_editor:
 
                 # S: save
                 elif event.key == pygame.K_s:
-                    save_beatmap(self.beatmap, BEATMAP_PATH)
-                    print("Saved beatmap to", BEATMAP_PATH)
+                    save_beatmap(self.beatmap, self.file_path)
+                    print("Saved beatmap to", self.file_path)
 
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -107,7 +106,7 @@ class Level_editor:
                     pos = event.pos
                     nearest = None
                     nearest_dist = 9999
-                    for obj in self.beatmap.objects:
+                    for obj in self.active_objects:
                         dist = ((obj.pos[0] - pos[0]) ** 2 + (obj.pos[1] - pos[1]) ** 2) ** 0.5
                         if dist < nearest_dist and dist < CIRCLE_RADIUS:
                             nearest = obj
@@ -122,6 +121,7 @@ class Level_editor:
                     self.slider_start_time = self.snap_time(self.editor_time)
                     self.slider_start_ticks = pygame.time.get_ticks()
                     self.slider_points = [event.pos]
+                    
 
 
                 if event.button == 4:  # scroll up: seek forward
@@ -150,25 +150,32 @@ class Level_editor:
 
     def draw(self):
         self.screen.fill((20, 20, 20))
-        
+        self.active_objects = []
+
+        if self.drawing_slider and len(self.slider_points) > 0:
+            mouse_pos = pygame.mouse.get_pos()
+            color = (255, 100, 100)
+            pygame.draw.line(self.screen, color, self.slider_points[0], mouse_pos, 5)
+            pygame.draw.circle(self.screen, color, self.slider_points[0], CIRCLE_RADIUS, 2)
+            self.screen.blit(pygame.font.SysFont("consolas", 12).render(f"start: {self.slider_start_time}ms", True, (255, 255, 255)), (self.slider_points[0][0] + CIRCLE_RADIUS, self.slider_points[0][1]))
+            self.slider_current_time = pygame.time.get_ticks() - self.slider_start_ticks
+            self.screen.blit(pygame.font.SysFont("consolas", 12).render(f"slider time: {self.slider_current_time}ms", True, (255, 255, 255)), (mouse_pos[0] + CIRCLE_RADIUS, mouse_pos[1]))
         # draw all hitobjects
         for obj in self.beatmap.objects:
-            if obj.time >= self.editor_time - 500 and obj.time <= self.editor_time + 500:
-                
-                if obj.type == "slider":
-                    
+            if obj.type == "slider":
+                if (obj.time >= self.editor_time - 500 or obj.time + obj.duration >= self.editor_time - 500) and (obj.time <= self.editor_time + 500 or obj.time + obj.duration <= self.editor_time + 500):
                     color = (255, 100, 100)
                     pygame.draw.line(self.screen, color, obj.pos, obj.end_pos, 5)
                     pygame.draw.circle(self.screen, color, obj.pos, CIRCLE_RADIUS, 2)
                     self.screen.blit(pygame.font.SysFont("consolas", 12).render(f"start: {obj.time}ms", True, (255, 255, 255)), (obj.pos[0] + CIRCLE_RADIUS, obj.pos[1]))
                     pygame.draw.circle(self.screen, color, obj.end_pos, CIRCLE_RADIUS, 2)
                     self.screen.blit(pygame.font.SysFont("consolas", 12).render(f"end: {obj.time + obj.duration}ms", True, (255, 255, 255)), (obj.end_pos[0] + CIRCLE_RADIUS, obj.end_pos[1]))
-
-                else:
-                    color = (0, 150, 255)
-                    pygame.draw.circle(self.screen, color, obj.pos, CIRCLE_RADIUS, 2)
-                    self.screen.blit(pygame.font.SysFont("consolas", 12).render(f"{obj.time}ms", True, (255, 255, 255)), (obj.pos[0] + CIRCLE_RADIUS, obj.pos[1]))
-                    
+                    self.active_objects.append(obj)
+            elif obj.time >= self.editor_time - 300 and obj.time <= self.editor_time + 300:
+                color = (0, 150, 255)
+                pygame.draw.circle(self.screen, color, obj.pos, CIRCLE_RADIUS, 2)
+                self.screen.blit(pygame.font.SysFont("consolas", 12).render(f"{obj.time}ms", True, (255, 255, 255)), (obj.pos[0] + CIRCLE_RADIUS, obj.pos[1]))
+                self.active_objects.append(obj)
 
         # draw current time line at top
         font = pygame.font.SysFont("consolas", 18)
@@ -183,7 +190,7 @@ class Level_editor:
         # simple timeline bar at bottom
         pygame.draw.rect(self.screen, (60, 60, 60), (0, WINDOW_HEIGHT - 40, WINDOW_WIDTH, 40))
         # we don't know song length here; just show a moving marker
-        marker_x = (self.editor_time % 5000) / 5000 * WINDOW_WIDTH
+        marker_x = (self.editor_time % 10000) / 10000 * WINDOW_WIDTH
         pygame.draw.line(self.screen, (255, 255, 0),
                          (marker_x, WINDOW_HEIGHT - 40),
                          (marker_x, WINDOW_HEIGHT))
@@ -262,14 +269,14 @@ class Beatmap:
 
 
 def load_beatmap(path):
-    if not os.path.exists(path):
-
-        return Beatmap(audio="song.mp3", offset=0)
-    with open(path, "r", encoding="utf-8") as f:
+    if not path in os.listdir("levels"):
+        print("Beatmap file not found:", path)
+        return
+    with open("levels/" + path, "r", encoding="utf-8") as f:
         data = json.load(f)
     return Beatmap.from_dict(data)
 
 
 def save_beatmap(beatmap, path):
-    with open(path, "w", encoding="utf-8") as f:
+    with open("levels/" + path, "w", encoding="utf-8") as f:
         json.dump(beatmap.to_dict(), f, indent=2)
