@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>main module &#8212; Osu? 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="open_lvl module" href="open_lvl.html" />
+    <link rel="prev" title="level_editor module" href="level_editor.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-main">
+<span id="main-module"></span><h1>main module<a class="headerlink" href="#module-main" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="main.Approach_Circle">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">Approach_Circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.Approach_Circle" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="main.Approach_Circle.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.Approach_Circle.draw" title="Link to this definition">¶</a></dt>
+<dd><p>draws itself and shrinks over time, is called in the draw function of hit objects (Circle and slider)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="main.Circle">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">Circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.Circle" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="main.Circle.click">
+<span class="sig-name descname"><span class="pre">click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.Circle.click" title="Link to this definition">¶</a></dt>
+<dd><p>calculates how accurate your click was and gives you score and hp accordingly</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.Circle.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.Circle.draw" title="Link to this definition">¶</a></dt>
+<dd><p>draws the circle, its approach circle and clicks itself when you take too long to click it</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.Circle.handle_event">
+<span class="sig-name descname"><span class="pre">handle_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.Circle.handle_event" title="Link to this definition">¶</a></dt>
+<dd><p>handles clicks on the circle</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.Main">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">Main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.Main" title="Link to this definition">¶</a></dt>
+<dd><p>draws the main menu</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.add_combo">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">add_combo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.add_combo" title="Link to this definition">¶</a></dt>
+<dd><p>handles combo increase and updates the highest combo achieved in the level</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.add_score">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">add_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amount</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.add_score" title="Link to this definition">¶</a></dt>
+<dd><p>changes your score when you hit an object, also handles the score popup and hp change when you hit or miss an object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.completed_level">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">completed_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highest_combo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accuracy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.completed_level" title="Link to this definition">¶</a></dt>
+<dd><p>draws the level end screen with the final score, accuracy and highest combo achieved in the level</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.end_level">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">end_level</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.end_level" title="Link to this definition">¶</a></dt>
+<dd><p>resets the level variables</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.failed_level">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">failed_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highest_combo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accuracy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.failed_level" title="Link to this definition">¶</a></dt>
+<dd><p>draws the level end screen with the final score, accuracy and highest combo achieved in the level</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.hp_bar">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">hp_bar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.hp_bar" title="Link to this definition">¶</a></dt>
+<dd><p>draws the hp bar and handles hp loss over time when you miss an object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.hp_change">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">hp_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amount</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.hp_change" title="Link to this definition">¶</a></dt>
+<dd><p>changes your hp when you hit an object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.level_editor_menu">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">level_editor_menu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.level_editor_menu" title="Link to this definition">¶</a></dt>
+<dd><p>draws the level editor menu (here you can select a level to edit or create a new one)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.level_select">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">level_select</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.level_select" title="Link to this definition">¶</a></dt>
+<dd><p>draws the level select menu (here you can select a level to play)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.load_level_files">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">load_level_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.load_level_files" title="Link to this definition">¶</a></dt>
+<dd><p>loads all level files from the levels folder and returns a list of their paths (used to create buttons in the level select menu and level editor menu)</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="main.menu_button">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">menu_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">command</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.menu_button" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="main.menu_button.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.menu_button.draw" title="Link to this definition">¶</a></dt>
+<dd><p>draws the button with its text</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.menu_button.handle_event">
+<span class="sig-name descname"><span class="pre">handle_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.menu_button.handle_event" title="Link to this definition">¶</a></dt>
+<dd><p>handles button clicks, if the button is clicked, it executes its command function (changes based on current status)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.open_level">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">open_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.open_level" title="Link to this definition">¶</a></dt>
+<dd><p>opens the level, loads the level data, creates the hit objects and starts the level song</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.open_level_editor">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">open_level_editor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.open_level_editor" title="Link to this definition">¶</a></dt>
+<dd><p>opens the level editor, if file_path is provided, it loads the beatmap from the file</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.play_level_song">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">play_level_song</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">song_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.play_level_song" title="Link to this definition">¶</a></dt>
+<dd><p>plays the level song, if the file is not found, it prints a warning and continues without music</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.run_game">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">run_game</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.run_game" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="main.slider">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">slider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.slider" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="main.slider.click">
+<span class="sig-name descname"><span class="pre">click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.slider.click" title="Link to this definition">¶</a></dt>
+<dd><p>calculates how long you held the slider and gives you score and hp accordingly</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.slider.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.slider.draw" title="Link to this definition">¶</a></dt>
+<dd><p>draws the slider, its approach circle and the slider ball, also handles slider breaks when you take too long to click the slider</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.slider.handle_event">
+<span class="sig-name descname"><span class="pre">handle_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.slider.handle_event" title="Link to this definition">¶</a></dt>
+<dd><p>handles clicks on the slider, also handles slider breaks when you release the keys or take too long to click the slider</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.slider.slide">
+<span class="sig-name descname"><span class="pre">slide</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.slider.slide" title="Link to this definition">¶</a></dt>
+<dd><p>moves the slider ball along the slider path</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.text_input_popup">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">text_input_popup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.text_input_popup" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Osu?</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="level_editor.html">level_editor module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="open_lvl.html">open_lvl module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+      <li>Previous: <a href="level_editor.html" title="previous chapter">level_editor module</a></li>
+      <li>Next: <a href="open_lvl.html" title="next chapter">open_lvl module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/main.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
