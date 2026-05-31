@@ -20,7 +20,7 @@ dependencies = {file = ["requirements.txt"]}
 
 
 [project.scripts]
-
+run_game = "src.main:main"
 
 [project.urls]
 Homepage = "https://github.com/diamondblock935/osu"
