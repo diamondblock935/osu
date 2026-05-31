@@ -8,7 +8,7 @@ from level_editor import Beatmap, Level_editor, load_beatmap, save_beatmap
 
 pygame.init()
 width, height = 1380, 770
-
+screen = pygame.display.set_mode((width, height))
 transparent_surface = pygame.Surface((width, height), pygame.SRCALPHA)
 clock = pygame.time.Clock()
 smol_font = pygame.font.SysFont('Arial', 20)
@@ -528,26 +528,23 @@ class slider():
         self.textPos = self.innertext.get_rect(center = self.slider_ball_pos)
         screen.blit(self.innertext, self.textPos)
 
+# creates the buttons for the main menu, level select menu and level editor menu, the buttons execute different functions based on the current status (main menu, level select menu or level editor menu) when clicked 
+menu_buttons = [menu_button("white", "Play", (width / 2 - 100, height / 2), (200, 50), level_select), menu_button("white", "Level Editor", (width / 2 - 100, height / 2 + 75), (200, 50), level_editor_menu)]
+level_select_buttons = []
 
+for i in load_level_files():
+    level_select_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width - 320, 0 + load_level_files().index(i) * 90), (300, 80), open_level))
+
+editor_menu_buttons = []
+
+for i in load_level_files():
+    editor_menu_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width - 320, 0 + load_level_files().index(i) * 90), (300, 80), open_level_editor))
+
+editor_menu_buttons.append(menu_button("white", "Create new level", (20, height - 100), (300, 80), open_level_editor))
 
 def run_game():
     global running, width, height, status, mouse_pos, score, combo, highest_combo, accuracy, hp, max_hp, score_popup_timer, score_popup_pos, score_add_text, circles, sliders, all_objects, slider_approach, circle_approach, level_start_time, time_elapsed
-    screen = pygame.display.set_mode((width, height))
-
-
-    # creates the buttons for the main menu, level select menu and level editor menu, the buttons execute different functions based on the current status (main menu, level select menu or level editor menu) when clicked 
-    menu_buttons = [menu_button("white", "Play", (width / 2 - 100, height / 2), (200, 50), level_select), menu_button("white", "Level Editor", (width / 2 - 100, height / 2 + 75), (200, 50), level_editor_menu)]
-    level_select_buttons = []
-
-    for i in load_level_files():
-        level_select_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width - 320, 0 + load_level_files().index(i) * 90), (300, 80), open_level))
-
-    editor_menu_buttons = []
-
-    for i in load_level_files():
-        editor_menu_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width - 320, 0 + load_level_files().index(i) * 90), (300, 80), open_level_editor))
-
-    editor_menu_buttons.append(menu_button("white", "Create new level", (20, height - 100), (300, 80), open_level_editor))
+    
     while running:
     
 
