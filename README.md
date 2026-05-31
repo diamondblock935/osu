@@ -6,10 +6,8 @@ Popis:
 
 
 
-ver_0.3:
-- byl přidán slider
-- upraveno hlavní menu
-- level selector
-- mechanika životů a přesnost
-- lepší grafika
-- bug fixy
+ver_0.5:
+ - přidán level editor
+ - při spuštění levelu již hraje hudba
+ - end screen
+
