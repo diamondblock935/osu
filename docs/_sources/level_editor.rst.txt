@@ -1,0 +1,7 @@
+level\_editor module
+====================
+
+.. automodule:: level_editor
+   :members:
+   :show-inheritance:
+   :undoc-members:
