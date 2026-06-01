@@ -22,9 +22,9 @@ curent_max_combo = 0 #  highest combo possible at the moment, changes with every
 curent_max_score = 0 #  highest score possible at the moment, changes with every hit object, is used to calculate accuracy
 accuracy = 0 #  % curent max score / score, changes with every hit object
 fps = 120
-difficulty = 9  #1-10, 10 being the hardest, changes the approach rate
-hp_diff = 1 # 1-10, 10 being the hardest, changes how much hp you lose when you miss an object and how much you gain when you hit an object
-hp_loss = 1 * hp_diff / fps 
+difficulty = 10  #1-10, 10 being the hardest, changes the approach rate
+hp_diff = 2.5 # 1-10, 10 being the hardest, changes how much hp you lose when you miss an object and how much you gain when you hit an object
+hp_loss = 2 * hp_diff / fps 
 max_hp = 100
 hp = max_hp
 score_popup_timer = 0
@@ -115,7 +115,7 @@ def open_level_editor(file_path=None):
             print("Invalid level name.")
             return
 
-        audio_file = text_input_popup("Enter audio file path:")
+        audio_file = text_input_popup("Enter audio file name from audio folder (example.mp3):")
         if audio_file is None or not audio_file in os.listdir("audio"):
             print("Invalid audio file.")
             return
@@ -340,7 +340,7 @@ class Circle():
     def draw(self):
         """draws the circle, its approach circle and clicks itself when you take too long to click it"""
         pygame.draw.circle(transparent_surface,self.color , self.circle_pos, self.radius)
-        pygame.draw.circle(screen, "white", self.circle_pos, 50, 5)
+        pygame.draw.circle(screen, "white", self.circle_pos, 50, 3)
 
         self.innertext = medium_font.render(self.text, True, self.text_col)
         self.textPos = self.innertext.get_rect(center = self.circle_pos)
@@ -408,8 +408,10 @@ class Approach_Circle():
 
     def draw(self):
         """draws itself and shrinks over time, is called in the draw function of hit objects (Circle and slider)"""
-        pygame.draw.circle(screen,self.color , self.pos, self.radius, 3)
+        pygame.draw.circle(transparent_surface,self.color , self.pos, self.radius, 3)
         self.radius -= approach_speed
+        if self.radius < 49:
+            self.color = (255, 100, 100, 0)
         # if self.radius <= 40:
         #     Circle.click(circles[approach_circles.index(self)], None)
         #     self.radius = 100
@@ -448,12 +450,11 @@ class slider():
         global curent_max_score, combo
         if self.clicked == 1:
         
-            if self.progress >= 0.95:
+            if self.progress >= 0.90:
                 self.score_add = 300
-                
-            elif self. progress >= 0.85:
+            elif self. progress >= 0.80:
                 self.score_add = 100
-            elif self.progress >= 0.7:
+            elif self.progress >= 0.60:
                 self.score_add = 50
             else:
                 self.score_add = 'x'
@@ -474,9 +475,9 @@ class slider():
         """handles clicks on the slider, also handles slider breaks when you release the keys or take too long to click the slider"""
         global mouse_pos, time_elapsed
         keys = pygame.key.get_pressed()
-        if (keys[pygame.K_x] or keys[pygame.K_z]) and mouse_pos.distance_to(self.slider_ball_pos) <= 80 and self.progress != 1:
+        if (keys[pygame.K_x] or keys[pygame.K_z]) and mouse_pos.distance_to(self.slider_ball_pos) <= 100 and self.progress != 1:
             slider_approach[sliders.index(self)].radius = 0
-            pygame.draw.circle(screen, "white", self.slider_ball_pos, 80, 3)
+            pygame.draw.circle(screen, (100, 200, 255), self.slider_ball_pos, 80, 3)
             
         elif time_elapsed > self.start_time + self.duration / 5:
             self.click()
@@ -516,7 +517,7 @@ class slider():
         pygame.draw.circle(transparent_surface, (255, 255, 255, 106) , self.end_pos, 50)
 
         pygame.draw.circle(transparent_surface, (100, 200, 255, 106), self.slider_ball_pos, 47)
-        pygame.draw.circle(screen, "white", self.slider_ball_pos, 50, 5)
+        pygame.draw.circle(screen, "white", self.slider_ball_pos, 50, 3)
 
         if slider_approach[sliders.index(self)].radius > 0 and slider_approach[sliders.index(self)].radius <= 40:
             
@@ -533,14 +534,18 @@ menu_buttons = [menu_button("white", "Play", (width / 2 - 100, height / 2), (200
 level_select_buttons = []
 
 for i in load_level_files():
-    level_select_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width - 320, 0 + load_level_files().index(i) * 90), (300, 80), open_level))
+    level_select_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width / 2 - 150, 240 + load_level_files().index(i) * 90), (300, 80), open_level))
+
+level_select_buttons.append(menu_button("white", "back", (20, height - 100), (200, 50), Main))
+
 
 editor_menu_buttons = []
 
 for i in load_level_files():
-    editor_menu_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width - 320, 0 + load_level_files().index(i) * 90), (300, 80), open_level_editor))
+    editor_menu_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width / 2 - 150, 240 + load_level_files().index(i) * 90), (300, 80), open_level_editor))
 
-editor_menu_buttons.append(menu_button("white", "Create new level", (20, height - 100), (300, 80), open_level_editor))
+editor_menu_buttons.append(menu_button("green", "Create new level", (width - 320, height - 100), (300, 80), open_level_editor))
+editor_menu_buttons.append(menu_button("white", "back", (20, height - 100), (200, 50), Main))
 
 def run_game():
     global running, width, height, status, mouse_pos, score, combo, highest_combo, accuracy, hp, max_hp, score_popup_timer, score_popup_pos, score_add_text, circles, sliders, all_objects, slider_approach, circle_approach, level_start_time, time_elapsed
@@ -645,7 +650,7 @@ def run_game():
             circle_approach = [a for a in circle_approach if a.finished == False]
             all_objects = [o for o in all_objects if o.finished == False]
 
-            if len(all_objects) > 0:
+            if len(all_objects) > 0 and all_objects[0].start_time - approach_time * 1000 / fps <= time_elapsed:
                 all_objects[0].active = True
 
             if len(all_objects) == 0 and hp > 0:
@@ -689,18 +694,19 @@ def run_game():
             screen.blit(transparent_surface, (0, 0))
             transparent_surface.fill((0, 0, 0, 0))
             
-            for s in slider_approach:
-                if sliders[slider_approach.index(s)].start_time - approach_time * 1000 / fps <= time_elapsed:
-                    s.draw()
-            for c in circle_approach:
-                if circles[circle_approach.index(c)].start_time - approach_time * 1000 / fps <= time_elapsed:
-                    c.draw()
+            
             for s in sliders:
                 if not s.finished and time_elapsed >= s.start_time - approach_time * 1000 / fps:
                     s.draw()
                     s.slide()
             for c in circles:
                 if not c.finished and time_elapsed >= c.start_time - approach_time * 1000 / fps:
+                    c.draw()
+            for s in slider_approach:
+                if sliders[slider_approach.index(s)].start_time - approach_time * 1000 / fps <= time_elapsed:
+                    s.draw()
+            for c in circle_approach:
+                if circles[circle_approach.index(c)].start_time - approach_time * 1000 / fps <= time_elapsed:
                     c.draw()
 
             
