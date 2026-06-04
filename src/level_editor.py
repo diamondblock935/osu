@@ -33,13 +33,13 @@ class Level_editor:
         self.slider_points = []
 
         # load audio
-        if self.beatmap.audio in os.listdir("audio"):
-            pygame.mixer.music.load("audio/" + self.beatmap.audio)
+        if self.beatmap.audio in os.listdir(os.path.dirname(__file__) + "/audio"):
+            pygame.mixer.music.load(os.path.dirname(__file__) + "/audio/" + self.beatmap.audio)
         else:
             print("WARNING: audio file not found:", self.beatmap.audio)
 
     def start_playback(self):
-        if not self.beatmap.audio in os.listdir("audio"):
+        if not self.beatmap.audio in os.listdir(os.path.dirname(__file__) + "/audio"):
             return
         self.playing = True
         self.play_start_ticks = pygame.time.get_ticks()
@@ -269,14 +269,14 @@ class Beatmap:
 
 
 def load_beatmap(path):
-    if not path in os.listdir("levels"):
+    if not path in os.listdir(os.path.dirname(__file__) + "/levels"):
         print("Beatmap file not found:", path)
         return
-    with open("levels/" + path, "r", encoding="utf-8") as f:
+    with open(os.path.dirname(__file__) + "/levels/" + path, "r", encoding="utf-8") as f:
         data = json.load(f)
     return Beatmap.from_dict(data)
 
 
 def save_beatmap(beatmap, path):
-    with open("levels/" + path, "w", encoding="utf-8") as f:
+    with open(os.path.dirname(__file__) + "/levels/" + path, "w", encoding="utf-8") as f:
         json.dump(beatmap.to_dict(), f, indent=2)
