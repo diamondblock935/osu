@@ -116,7 +116,7 @@ def open_level_editor(file_path=None):
             return
 
         audio_file = text_input_popup("Enter audio file name from audio folder (example.mp3):")
-        if audio_file is None or not audio_file in os.listdir("audio"):
+        if audio_file is None or not audio_file in os.listdir(os.path.dirname(__file__) + "/audio"):
             print("Invalid audio file.")
             return
         level = Beatmap(audio_file, 0)
@@ -141,7 +141,7 @@ def load_level_files():
     """loads all level files from the levels folder and returns a list of their paths (used to create buttons in the level select menu and level editor menu)"""
     files = []
 
-    for filename in os.listdir("levels"):
+    for filename in os.listdir(os.path.dirname(__file__) + "/levels"):
         if filename.endswith(".json"):
             files.append(filename)
 
@@ -183,8 +183,8 @@ def open_level(file_path):
 
 def play_level_song(song_path):
     """plays the level song, if the file is not found, it prints a warning and continues without music"""
-    if song_path in os.listdir("audio"):
-        pygame.mixer.music.load("audio/" + song_path)
+    if song_path in os.listdir(os.path.dirname(__file__) + "/audio"):
+        pygame.mixer.music.load(os.path.dirname(__file__) + "/audio/" + song_path)
         pygame.mixer.music.play()
     else:
         print("WARNING: audio file not found:", song_path)
