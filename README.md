@@ -16,5 +16,4 @@ known issues
  - approach circle se za určitých okolností nevykresluje správně
  - nejde vypnout level během toho, co je na obrazovce skip button
  - v menu nejde scrollovat a při příliž velkém počtu levelů se některé nevejdou na obrazovku
- - 
 
