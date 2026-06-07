@@ -72,6 +72,7 @@ class Level_editor:
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    pygame.mixer.music.stop()
                     self.running = False
 
                 # Space: play/pause
