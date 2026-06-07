@@ -35,6 +35,8 @@ level_start_time = 0 # time when the level starts, used to calculate time elapse
 hp_loss_start = 0 # time when you start losing hp, used to calculate hp loss over time (is set when you miss an object in Circle and slider click functions)
 approach_speed = 10 * difficulty / fps
 approach_time = 50 / approach_speed 
+time_elapsed = 0 # time elapsed since the level started, used to calculate when to activate hit objects and approach circles (is updated in the main game loop)
+skipped_time = 0 # time skipped when you click the skip button, used to calculate time elapsed when you skip the beggining of the level (is updated in skip_level_pause function)
 
 sliders = []
 circles = []
@@ -149,11 +151,13 @@ def load_level_files():
 
 def open_level(file_path):
     """opens the level, loads the level data, creates the hit objects and starts the level song"""
-    global status, level_start_time, circles, sliders, all_objects, slider_approach, circle_approach, score, combo, hp, max_hp
+    global status, level_start_time, circles, sliders, all_objects, slider_approach, circle_approach, score, combo, hp, max_hp, skipped_time
     level_data = load_level(file_path)
+    
+    
 
     audio_path = level_data["audio_file"]
-    play_level_song(audio_path)
+    play_level_song(audio_path, 0)
    
     for i in level_data["objects"]:
         if i["type"] == "circle":
@@ -175,17 +179,18 @@ def open_level(file_path):
     all_objects.sort(key=lambda x: x.start_time)
 
     hp = max_hp
-    
+    skipped_time = 0
+
     for i in all_objects:
         i.text = str(all_objects.index(i) + 1)
     level_start_time = pygame.time.get_ticks()
     status = "running"
 
-def play_level_song(song_path):
+def play_level_song(song_path, time=0):
     """plays the level song, if the file is not found, it prints a warning and continues without music"""
     if song_path in os.listdir(os.path.dirname(__file__) + "/audio"):
         pygame.mixer.music.load(os.path.dirname(__file__) + "/audio/" + song_path)
-        pygame.mixer.music.play()
+        pygame.mixer.music.play(start=time/1000)
     else:
         print("WARNING: audio file not found:", song_path)
     
@@ -204,6 +209,16 @@ def end_level():
     all_objects.clear()
     circle_approach.clear()
     slider_approach.clear()
+def skip_level_pause():
+    """skips the beggining of the level if there are no objects to click for a while"""
+    global time_elapsed, skipped_time
+    if len(all_objects) == 0:
+        return
+    else:
+        time = all_objects[0].start_time - approach_time * 1000 / fps - 3000
+    time_elapsed = time 
+    skipped_time = time - pygame.time.get_ticks() + level_start_time
+    pygame.mixer.music.set_pos(time / 1000)
 
 def completed_level(score, highest_combo, accuracy):
     """draws the level end screen with the final score, accuracy and highest combo achieved in the level"""
@@ -229,13 +244,13 @@ def hp_bar():
     """draws the hp bar and handles hp loss over time when you miss an object"""
     global hp, max_hp, hp_loss_start, hp_loss, status, combo
 
-    if combo == 0:
-        hp_loss_start = pygame.time.get_ticks()
+    # if combo == 0:
+    #     hp_loss_start = pygame.time.get_ticks()
 
-    if hp_loss_start + 5000 >= pygame.time.get_ticks():
-        hp -= hp_loss
-    else:
-        hp_loss_start = 0
+    # if hp_loss_start + 5000 >= pygame.time.get_ticks():
+    #     hp -= hp_loss
+    # else:
+    #     hp_loss_start = 0
 
     if hp > max_hp:
         hp = max_hp
@@ -256,7 +271,7 @@ def add_score(amount, pos):
     if type(amount) == int:
         score += amount + amount * combo / 5
         hp_change(amount / (5 * hp_diff))
-    if amount == 'x':
+    if type(amount) == str:
         combo = 0
         hp_change(-5 * hp_diff)
         score_add_text = smol_font.render(amount, True, "red")
@@ -286,13 +301,15 @@ class menu_button():
         self.color = color
         self.original_color = self.color
         self.command = command
+        self.clicked = False
 
     def draw(self):
         """draws the button with its text"""
-        pygame.draw.rect(screen, self.color, (*self.pos, *self.size))
-        button_text = smol_font.render(self.text, True, "black")
-        text_rect = button_text.get_rect(center=(self.pos[0] + self.size[0] // 2, self.pos[1] + self.size[1] // 2))
-        screen.blit(button_text, text_rect)
+        if self.clicked == False:
+            pygame.draw.rect(screen, self.color, (*self.pos, *self.size))
+            button_text = smol_font.render(self.text, True, "black")
+            text_rect = button_text.get_rect(center=(self.pos[0] + self.size[0] // 2, self.pos[1] + self.size[1] // 2))
+            screen.blit(button_text, text_rect)
 
     def handle_event(self, event):
         """handles button clicks, if the button is clicked, it executes its command function (changes based on current status)"""
@@ -300,13 +317,15 @@ class menu_button():
         if event.type == pygame.MOUSEBUTTONDOWN:
             
             if self.pos[0] <= mouse_pos.x <= self.pos[0] + self.size[0] and self.pos[1] <= mouse_pos.y <= self.pos[1] + self.size[1]:
-                
                 if status == "level_select":
+                    if level_select_buttons.index(self) >= len(load_level_files()):
+                        self.command()
+                        return
                     self.level_path = load_level_files()[level_select_buttons.index(self)]
                     self.command(self.level_path)
                     
                 elif status == "level_editor_menu":
-                    if editor_menu_buttons.index(self) == len(load_level_files()):
+                    if editor_menu_buttons.index(self) >= len(load_level_files()):
                         self.command()
                         return
                     self.level_path = load_level_files()[editor_menu_buttons.index(self)]
@@ -534,7 +553,7 @@ menu_buttons = [menu_button("white", "Play", (width / 2 - 100, height / 2), (200
 level_select_buttons = []
 
 for i in load_level_files():
-    level_select_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width / 2 - 150, 240 + load_level_files().index(i) * 90), (300, 80), open_level))
+    level_select_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width -400, 180 + load_level_files().index(i) * 90), (300, 80), open_level))
 
 level_select_buttons.append(menu_button("white", "back", (20, height - 100), (200, 50), Main))
 
@@ -542,18 +561,21 @@ level_select_buttons.append(menu_button("white", "back", (20, height - 100), (20
 editor_menu_buttons = []
 
 for i in load_level_files():
-    editor_menu_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width / 2 - 150, 240 + load_level_files().index(i) * 90), (300, 80), open_level_editor))
+    editor_menu_buttons.append(menu_button("white", i.split("\\")[-1].split(".")[0], (width - 400, 180 + load_level_files().index(i) * 90), (300, 80), open_level_editor))
 
 editor_menu_buttons.append(menu_button("green", "Create new level", (width - 320, height - 100), (300, 80), open_level_editor))
 editor_menu_buttons.append(menu_button("white", "back", (20, height - 100), (200, 50), Main))
+
+skip_button = menu_button("white", "Skip", (width / 2 - 75, height * 3 / 4), (150, 50), skip_level_pause)
 
 def run_game():
     global running, width, height, status, mouse_pos, score, combo, highest_combo, accuracy, hp, max_hp, score_popup_timer, score_popup_pos, score_add_text, circles, sliders, all_objects, slider_approach, circle_approach, level_start_time, time_elapsed
     
     while running:
-    
+        print(status)
 
         mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
+
         if status == "menu":
             Main()
             
@@ -642,7 +664,7 @@ def run_game():
             pygame.display.flip()
 
         if status == "running":
-            time_elapsed = pygame.time.get_ticks() - level_start_time
+            time_elapsed = pygame.time.get_ticks() - level_start_time + skipped_time
 
             sliders = [s for s in sliders if s.finished == False]
             circles = [c for c in circles if c.finished == False]
@@ -662,6 +684,15 @@ def run_game():
                 status = "level_failed"
                 pygame.mixer.music.stop()
                 print("you failed the level")
+
+            if len(all_objects) > 0 and (all_objects[0].start_time - approach_time * 1000 / fps) - time_elapsed >= 5000 and not all_objects[0].active:
+                skip_button.draw()
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN and skip_button.pos[0] <= mouse_pos.x <= skip_button.pos[0] + skip_button.size[0] and skip_button.pos[1] <= mouse_pos.y <= skip_button.pos[1] + skip_button.size[1]:
+                        skip_button.handle_event(event)
+                        pygame.display.flip()
+                        screen.fill("black")
+                        
 
             hp_bar()
 
