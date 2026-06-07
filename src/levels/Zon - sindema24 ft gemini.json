@@ -1,0 +1,888 @@
+{
+  "audio_file": "zon.mp3",
+  "offset": 0,
+  "objects": [
+    {
+      "type": "circle",
+      "time": 20000,
+      "pos": [
+        232,
+        240
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 20250,
+      "pos": [
+        321,
+        196
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 20550,
+      "pos": [
+        439,
+        193
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 20900,
+      "pos": [
+        544,
+        215
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 21500,
+      "pos": [
+        635,
+        315
+      ],
+      "end_pos": [
+        737,
+        335
+      ],
+      "duration": 251
+    },
+    {
+      "type": "circle",
+      "time": 22500,
+      "pos": [
+        890,
+        185
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 22800,
+      "pos": [
+        800,
+        339
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 22900,
+      "pos": [
+        966,
+        349
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 23150,
+      "pos": [
+        1060,
+        250
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 23800,
+      "pos": [
+        1063,
+        462
+      ],
+      "end_pos": [
+        852,
+        473
+      ],
+      "duration": 587
+    },
+    {
+      "type": "circle",
+      "time": 24600,
+      "pos": [
+        791,
+        480
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 24800,
+      "pos": [
+        685,
+        388
+      ],
+      "end_pos": [
+        656,
+        513
+      ],
+      "duration": 378
+    },
+    {
+      "type": "slider",
+      "time": 25600,
+      "pos": [
+        644,
+        610
+      ],
+      "end_pos": [
+        168,
+        485
+      ],
+      "duration": 817
+    },
+    {
+      "type": "circle",
+      "time": 26650,
+      "pos": [
+        216,
+        332
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 26750,
+      "pos": [
+        337,
+        353
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 26850,
+      "pos": [
+        471,
+        372
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 27800,
+      "pos": [
+        324,
+        332
+      ],
+      "end_pos": [
+        554,
+        331
+      ],
+      "duration": 613
+    },
+    {
+      "type": "slider",
+      "time": 28600,
+      "pos": [
+        565,
+        408
+      ],
+      "end_pos": [
+        823,
+        408
+      ],
+      "duration": 527
+    },
+    {
+      "type": "circle",
+      "time": 29650,
+      "pos": [
+        970,
+        462
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 29850,
+      "pos": [
+        1088,
+        441
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 30200,
+      "pos": [
+        1016,
+        303
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 30350,
+      "pos": [
+        867,
+        294
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 30550,
+      "pos": [
+        703,
+        280
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 31550,
+      "pos": [
+        525,
+        248
+      ],
+      "end_pos": [
+        486,
+        365
+      ],
+      "duration": 473
+    },
+    {
+      "type": "circle",
+      "time": 32250,
+      "pos": [
+        503,
+        436
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 32350,
+      "pos": [
+        597,
+        452
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 32800,
+      "pos": [
+        646,
+        456
+      ],
+      "end_pos": [
+        765,
+        443
+      ],
+      "duration": 321
+    },
+    {
+      "type": "circle",
+      "time": 34000,
+      "pos": [
+        883,
+        425
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 34350,
+      "pos": [
+        997,
+        411
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 34500,
+      "pos": [
+        1001,
+        287
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 35950,
+      "pos": [
+        534,
+        224
+      ],
+      "end_pos": [
+        223,
+        223
+      ],
+      "duration": 494
+    },
+    {
+      "type": "circle",
+      "time": 36550,
+      "pos": [
+        211,
+        224
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 37250,
+      "pos": [
+        171,
+        367
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 37500,
+      "pos": [
+        281,
+        370
+      ],
+      "end_pos": [
+        461,
+        379
+      ],
+      "duration": 538
+    },
+    {
+      "type": "circle",
+      "time": 38500,
+      "pos": [
+        588,
+        386
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 38700,
+      "pos": [
+        680,
+        325
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 38900,
+      "pos": [
+        677,
+        217
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 39100,
+      "pos": [
+        554,
+        122
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 40200,
+      "pos": [
+        249,
+        148
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 40600,
+      "pos": [
+        249,
+        211
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 40950,
+      "pos": [
+        249,
+        257
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 41100,
+      "pos": [
+        252,
+        314
+      ],
+      "end_pos": [
+        436,
+        316
+      ],
+      "duration": 416
+    },
+    {
+      "type": "circle",
+      "time": 41700,
+      "pos": [
+        527,
+        310
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 41750,
+      "pos": [
+        536,
+        311
+      ],
+      "end_pos": [
+        692,
+        311
+      ],
+      "duration": 523
+    },
+    {
+      "type": "slider",
+      "time": 42300,
+      "pos": [
+        681,
+        350
+      ],
+      "end_pos": [
+        1152,
+        350
+      ],
+      "duration": 1207
+    },
+    {
+      "type": "slider",
+      "time": 43850,
+      "pos": [
+        1170,
+        412
+      ],
+      "end_pos": [
+        899,
+        483
+      ],
+      "duration": 416
+    },
+    {
+      "type": "slider",
+      "time": 44400,
+      "pos": [
+        877,
+        513
+      ],
+      "end_pos": [
+        575,
+        486
+      ],
+      "duration": 770
+    },
+    {
+      "type": "circle",
+      "time": 45700,
+      "pos": [
+        487,
+        453
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 45900,
+      "pos": [
+        442,
+        363
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 46100,
+      "pos": [
+        425,
+        251
+      ],
+      "end_pos": [
+        591,
+        213
+      ],
+      "duration": 315
+    },
+    {
+      "type": "circle",
+      "time": 46550,
+      "pos": [
+        650,
+        210
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 47650,
+      "pos": [
+        781,
+        239
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 47900,
+      "pos": [
+        869,
+        305
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 48100,
+      "pos": [
+        903,
+        334
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 48250,
+      "pos": [
+        923,
+        386
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 48450,
+      "pos": [
+        914,
+        429
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 48650,
+      "pos": [
+        834,
+        548
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 48800,
+      "pos": [
+        798,
+        547
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 48950,
+      "pos": [
+        743,
+        549
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 49150,
+      "pos": [
+        638,
+        541
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 49400,
+      "pos": [
+        621,
+        534
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 49650,
+      "pos": [
+        537,
+        522
+      ],
+      "end_pos": [
+        533,
+        149
+      ],
+      "duration": 777
+    },
+    {
+      "type": "circle",
+      "time": 50700,
+      "pos": [
+        700,
+        130
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 50850,
+      "pos": [
+        726,
+        134
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 51100,
+      "pos": [
+        745,
+        139
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 51350,
+      "pos": [
+        770,
+        155
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 51650,
+      "pos": [
+        813,
+        190
+      ],
+      "end_pos": [
+        847,
+        384
+      ],
+      "duration": 444
+    },
+    {
+      "type": "circle",
+      "time": 52800,
+      "pos": [
+        875,
+        486
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 52900,
+      "pos": [
+        826,
+        492
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 53300,
+      "pos": [
+        712,
+        490
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 53650,
+      "pos": [
+        566,
+        457
+      ],
+      "end_pos": [
+        350,
+        281
+      ],
+      "duration": 616
+    },
+    {
+      "type": "circle",
+      "time": 54650,
+      "pos": [
+        406,
+        131
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 55250,
+      "pos": [
+        763,
+        386
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 55650,
+      "pos": [
+        795,
+        503
+      ],
+      "end_pos": [
+        270,
+        492
+      ],
+      "duration": 995
+    },
+    {
+      "type": "slider",
+      "time": 56800,
+      "pos": [
+        264,
+        349
+      ],
+      "end_pos": [
+        595,
+        287
+      ],
+      "duration": 473
+    },
+    {
+      "type": "circle",
+      "time": 57750,
+      "pos": [
+        622,
+        316
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 59600,
+      "pos": [
+        657,
+        348
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 59950,
+      "pos": [
+        734,
+        342
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 60350,
+      "pos": [
+        813,
+        270
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 60550,
+      "pos": [
+        1036,
+        183
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 61000,
+      "pos": [
+        1060,
+        251
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 61400,
+      "pos": [
+        1056,
+        334
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 61650,
+      "pos": [
+        1026,
+        493
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 62050,
+      "pos": [
+        1006,
+        528
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 62500,
+      "pos": [
+        946,
+        575
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 62500,
+      "pos": [
+        788,
+        572
+      ],
+      "end_pos": [
+        533,
+        554
+      ],
+      "duration": 533
+    },
+    {
+      "type": "slider",
+      "time": 63700,
+      "pos": [
+        451,
+        525
+      ],
+      "end_pos": [
+        439,
+        164
+      ],
+      "duration": 869
+    },
+    {
+      "type": "slider",
+      "time": 64700,
+      "pos": [
+        479,
+        81
+      ],
+      "end_pos": [
+        865,
+        99
+      ],
+      "duration": 682
+    },
+    {
+      "type": "slider",
+      "time": 65550,
+      "pos": [
+        918,
+        127
+      ],
+      "end_pos": [
+        657,
+        609
+      ],
+      "duration": 879
+    },
+    {
+      "type": "circle",
+      "time": 66700,
+      "pos": [
+        797,
+        624
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 67050,
+      "pos": [
+        851,
+        591
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 67350,
+      "pos": [
+        882,
+        534
+      ]
+    },
+    {
+      "type": "circle",
+      "time": 67450,
+      "pos": [
+        890,
+        478
+      ]
+    },
+    {
+      "type": "slider",
+      "time": 67750,
+      "pos": [
+        927,
+        424
+      ],
+      "end_pos": [
+        708,
+        408
+      ],
+      "duration": 335
+    }
+  ]
+}
