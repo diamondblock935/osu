@@ -1,8 +1,10 @@
 import math
 import os
+import time
 import pygame
 import random
 import json
+
 from open_lvl import load_level
 from level_editor import Beatmap, Level_editor, load_beatmap, save_beatmap
 
@@ -271,7 +273,7 @@ def add_score(amount, pos):
     if type(amount) == int:
         score += amount + amount * combo / 5
         hp_change(amount / (5 * hp_diff))
-    if type(amount) == str:
+    else:
         combo = 0
         hp_change(-5 * hp_diff)
         score_add_text = smol_font.render(amount, True, "red")
@@ -386,7 +388,7 @@ class Circle():
 
         if self.clicked == 0: 
             if circle_approach[circles.index(self)].radius - self.radius >= 32 or circle_approach[circles.index(self)].radius <= self.radius - 10:
-                self.score_add = 'x'
+                self.score_add = "x"
 
             elif circle_approach[circles.index(self)].radius - self.radius <= 7:
                 self.score_add = 300
@@ -476,7 +478,7 @@ class slider():
             elif self.progress >= 0.60:
                 self.score_add = 50
             else:
-                self.score_add = 'x'
+                self.score_add = "x"
 
             curent_max_score += 300 + 300 * combo / 5
 
@@ -499,6 +501,7 @@ class slider():
             pygame.draw.circle(screen, (100, 200, 255), self.slider_ball_pos, 80, 3)
             
         elif time_elapsed > self.start_time + self.duration / 5:
+            self.clicked = 1
             self.click()
             slider_approach[sliders.index(self)].finished = True
             self.finished = True
@@ -676,6 +679,7 @@ def run_game():
                 all_objects[0].active = True
 
             if len(all_objects) == 0 and hp > 0:
+                time.sleep(0.5)
                 status = "level_completed" # placehoder, will be changed to "level complete" in the future
                 pygame.mixer.music.stop()
                 print("you completed the level")
